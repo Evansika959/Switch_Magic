@@ -1,6 +1,6 @@
 # pip install accelerate
 from transformers import AutoTokenizer
-from model_src.switch_transformer import SwitchTransformersForConditionalGeneration
+from transformers.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 
 tokenizer = AutoTokenizer.from_pretrained("google/switch-base-64")
 model = SwitchTransformersForConditionalGeneration.from_pretrained("google/switch-base-64", device_map="auto")
