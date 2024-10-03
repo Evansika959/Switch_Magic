@@ -1,5 +1,5 @@
 # pip install accelerate
-from transformers.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 
 from transformers import AutoTokenizer
 
