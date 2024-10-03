@@ -23,17 +23,17 @@ import torch
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss
 
-from ...activations import ACT2FN
-from ...generation import GenerationMixin
-from ...modeling_outputs import (
+from activations import ACT2FN
+from generation import GenerationMixin
+from modeling_outputs import (
     MoEModelOutput,
     MoEModelOutputWithPastAndCrossAttentions,
     Seq2SeqMoEModelOutput,
     Seq2SeqMoEOutput,
 )
-from ...modeling_utils import PreTrainedModel
-from ...pytorch_utils import ALL_LAYERNORM_LAYERS, find_pruneable_heads_and_indices, prune_linear_layer
-from ...utils import (
+from modeling_utils import PreTrainedModel
+from pytorch_utils import ALL_LAYERNORM_LAYERS, find_pruneable_heads_and_indices, prune_linear_layer
+from utils import (
     DUMMY_INPUTS,
     DUMMY_MASK,
     add_start_docstrings,
@@ -42,7 +42,7 @@ from ...utils import (
     logging,
     replace_return_docstrings,
 )
-from .configuration_switch_transformers import SwitchTransformersConfig
+from configuration_switch_transformers import SwitchTransformersConfig
 
 
 logger = logging.get_logger(__name__)
