@@ -21,6 +21,8 @@ print(f"Hidden Dimension: {hidden_dim}")
 num_attention_heads = config.num_attention_heads
 print(f"Number of Attention Heads: {num_attention_heads}")
 
+model.summary()
+
 # # Feed-forward network (FFN) dimension
 # ffn_dim = config.intermediate_size
 # print(f"Feed-Forward Network Dimension: {ffn_dim}")
