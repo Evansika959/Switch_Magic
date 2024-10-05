@@ -12,7 +12,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
 )
 
 # Load the WMT16 English-German dataset
-dataset = load_dataset("wmt16", "de-en")
+dataset = load_dataset("wmt16", "en-de")
 
 print(dataset)
 
@@ -24,8 +24,8 @@ def print_examples(split_name, split):
     print(f"\n--- {split_name.capitalize()} Split ---\n")
     for i in range(num_examples):
         example = split[i]
-        source = example['translation']['de']
-        target = example['translation']['en']
+        source = example['translation']['en']
+        target = example['translation']['de']
         print(f"Example {i+1}:")
         print(f"Source (German): {source}")
         print(f"Target (English): {target}\n")
@@ -39,56 +39,15 @@ print_examples("validation", dataset["validation"])
 # Print examples from the test set
 print_examples("test", dataset["test"])
 
-import statistics
-from tqdm import tqdm
-
-def compute_length_statistics(dataset_split, source_lang='de', target_lang='en'):
-    """
-    Computes average and maximum sequence lengths for source and target languages.
-    
-    Args:
-        dataset_split (Dataset): A split of the dataset (train/validation/test).
-        source_lang (str): Language code for the source language.
-        target_lang (str): Language code for the target language.
-        
-    Returns:
-        dict: A dictionary containing average and maximum lengths.
-    """
-    source_lengths = []
-    target_lengths = []
-    
-    for example in tqdm(dataset_split, desc="Computing lengths"):
-        source_sentence = example['translation'][source_lang]
-        target_sentence = example['translation'][target_lang]
-        
-        # Compute length in tokens (words). You can adjust this to characters if preferred.
-        source_length = len(source_sentence.split())
-        target_length = len(target_sentence.split())
-        
-        source_lengths.append(source_length)
-        target_lengths.append(target_length)
-    
-    stats = {
-        'source_avg_length': statistics.mean(source_lengths),
-        'source_max_length': max(source_lengths),
-        'target_avg_length': statistics.mean(target_lengths),
-        'target_max_length': max(target_lengths)
-    }
-    
-    return stats
-
-print("\n--- Length Statistics ---")
-print(compute_length_statistics(dataset["train"]))
-
 # Preprocess the data with reduced max_length
 def preprocess_function(examples):
-    sources = examples['en']
-    targets = examples['de']
+    sources = examples['de']
+    targets = examples['en']
     
     # Tokenize the source sentences
     model_inputs = tokenizer(
         sources,
-        max_length=32,           # Reduced from typical higher values
+        max_length=512,           # Reduced from typical higher values
         truncation=True,
         padding='max_length'     # Optional: adjust padding as needed
     )
@@ -97,7 +56,7 @@ def preprocess_function(examples):
     with tokenizer.as_target_tokenizer():
         labels = tokenizer(
             targets,
-            max_length=32,       # Reduced from typical higher values
+            max_length=512,       # Reduced from typical higher values
             truncation=True,
             padding='max_length' # Optional: adjust padding as needed
         )
