@@ -12,7 +12,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
 )
 
 # Load the WMT16 English-German dataset
-dataset = load_dataset("wmt16", "en-de")
+dataset = load_dataset("wmt19", "de-en")
 
 print(dataset)
 
@@ -24,8 +24,8 @@ def print_examples(split_name, split):
     print(f"\n--- {split_name.capitalize()} Split ---\n")
     for i in range(num_examples):
         example = split[i]
-        source = example['translation']['en']
-        target = example['translation']['de']
+        source = example['translation']['de']
+        target = example['translation']['en']
         print(f"Example {i+1}:")
         print(f"Source (German): {source}")
         print(f"Target (English): {target}\n")
