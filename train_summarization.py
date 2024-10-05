@@ -82,6 +82,15 @@ def main():
 
     model = model.to(device)
 
+    print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
+    for epoch in range(config.VAL_EPOCHS):
+        predictions, actuals = validate(epoch, tokenizer, model, device, val_loader)
+        print('Generated Text',predictions,'Actual Text',actuals)
+        final_df = pd.DataFrame({'Generated Text':predictions,'Actual Text':actuals})
+        final_df.to_csv('./output/predictions.csv')
+        print('Output Files generated for review')
+    return model, tokenizer
+
     # Defining the optimizer that will be used to tune the weights of the network in the training session. 
     optimizer = torch.optim.Adam(params =  model.parameters(), lr=config.LEARNING_RATE)
 
