@@ -1,6 +1,7 @@
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, TrainingArguments, Trainer
-from datasets import load_dataset, load_metric
+from datasets import load_dataset
+import evaluate
 import torch
 
 # Initialize the tokenizer and model
@@ -78,7 +79,7 @@ data_collator = DataCollatorForSeq2Seq(
 )
 
 # Load BLEU metric
-bleu = load_metric("sacrebleu")
+bleu = evaluate.load("sacrebleu")
 
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
