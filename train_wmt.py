@@ -39,6 +39,47 @@ print_examples("validation", dataset["validation"])
 # Print examples from the test set
 print_examples("test", dataset["test"])
 
+import statistics
+from tqdm import tqdm
+
+def compute_length_statistics(dataset_split, source_lang='de', target_lang='en'):
+    """
+    Computes average and maximum sequence lengths for source and target languages.
+    
+    Args:
+        dataset_split (Dataset): A split of the dataset (train/validation/test).
+        source_lang (str): Language code for the source language.
+        target_lang (str): Language code for the target language.
+        
+    Returns:
+        dict: A dictionary containing average and maximum lengths.
+    """
+    source_lengths = []
+    target_lengths = []
+    
+    for example in tqdm(dataset_split, desc="Computing lengths"):
+        source_sentence = example['translation'][source_lang]
+        target_sentence = example['translation'][target_lang]
+        
+        # Compute length in tokens (words). You can adjust this to characters if preferred.
+        source_length = len(source_sentence.split())
+        target_length = len(target_sentence.split())
+        
+        source_lengths.append(source_length)
+        target_lengths.append(target_length)
+    
+    stats = {
+        'source_avg_length': statistics.mean(source_lengths),
+        'source_max_length': max(source_lengths),
+        'target_avg_length': statistics.mean(target_lengths),
+        'target_max_length': max(target_lengths)
+    }
+    
+    return stats
+
+print("\n--- Length Statistics ---")
+print(compute_length_statistics(dataset["train"]))
+
 # Preprocess the data with reduced max_length
 def preprocess_function(examples):
     sources = examples['en']
