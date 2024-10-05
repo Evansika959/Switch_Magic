@@ -12,7 +12,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
 )
 
 # Load the WMT16 English-German dataset
-dataset = load_dataset("wmt19", "de-en")
+dataset = load_dataset("wmt16", "en-de")
 
 print(dataset)
 
