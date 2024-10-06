@@ -46,6 +46,11 @@ train_dataset, val_dataset = random_split(tokenized_dataset["train"], [train_siz
 # Initialize DataCollator
 data_collator = DataCollatorWithPadding(tokenizer, padding=True)
 
+# take only 10% of the dataset for faster training
+train_dataset = train_dataset.select(range(0, len(train_dataset), len(train_dataset) // 10))
+
+val_dataset = val_dataset.select(range(0, len(val_dataset), len(val_dataset) // 10))
+
 # Create DataLoaders
 train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=data_collator)
 val_dataloader = DataLoader(val_dataset, batch_size=64, shuffle=False, collate_fn=data_collator)
@@ -54,6 +59,7 @@ val_dataloader = DataLoader(val_dataset, batch_size=64, shuffle=False, collate_f
 # Set the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
+print("Training on:", device)
 
 # Define optimizer and scheduler
 optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
