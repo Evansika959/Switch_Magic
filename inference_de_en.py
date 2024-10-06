@@ -17,23 +17,34 @@ model.to(device)
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
 
-# Select a test case from the dataset
-test_case = dataset["test"][0]
-print("Original English Sentence:")
-print(test_case["translation"]["en"])
+# Randomize the test iteration
+import random
+random.seed(42)
+random.shuffle(dataset["test"])
 
-# Tokenize the input
-input_text = test_case["translation"]["en"]
-inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
+test_num = 5
 
-# Generate translation
-model.eval()
-with torch.no_grad():
-    outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
+for i in range(test_num):
+    # Select a test case from the dataset
+    test_case = dataset["test"][i]
+    print("Original English Sentence:")
+    print(test_case["translation"]["en"])
 
-# Decode the generated tokens
-generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    # Tokenize the input
+    input_text = test_case["translation"]["en"]
+    inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
 
-# Print the generated translation
-print("Generated German Translation:")
-print(generated_text)
+    # Generate translation
+    model.eval()
+    with torch.no_grad():
+        outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
+
+    # Decode the generated tokens
+    generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    # Print the generated translation
+    print("Generated German Translation:")
+    print(generated_text)
+
+    print("Reference German Translation:")
+    print(test_case["translation"]["de"])
