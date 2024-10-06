@@ -8,7 +8,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
     "google/switch-base-8",
     device_map="auto"  # Automatically distribute the model across available devices
 )
-model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
+# model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 
 # Set the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,7 +23,7 @@ print("Original German Sentence:")
 print(test_case["translation"]["de"])
 
 # Tokenize the input
-input_text = test_case["translation"]["de"]
+input_text = "Translate to English:" + test_case["translation"]["de"]
 inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
 
 # Generate translation
