@@ -41,6 +41,7 @@ print(tokenized_dataset["train"][0:3])
 # Split the dataset into training and validation sets (90% train, 10% validation)
 train_size = int(0.9 * len(tokenized_dataset["train"]))
 val_size = len(tokenized_dataset["train"]) - train_size
+
 train_dataset, val_dataset = random_split(tokenized_dataset["train"], [train_size, val_size])
 
 # Initialize DataCollator
