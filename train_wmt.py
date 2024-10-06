@@ -68,6 +68,28 @@ tokenized_datasets = dataset.map(
     remove_columns=dataset["train"].column_names
 )
 
+# Define the number of tokenized examples to inspect
+num_tokenized_examples = 3
+
+# Function to print tokenized examples from a split
+def print_tokenized_examples(split_name, split):
+    print(f"\n--- Tokenized {split_name.capitalize()} Split ---\n")
+    for i in range(num_tokenized_examples):
+        example = split[i]
+        input_ids = example['input_ids']
+        attention_mask = example['attention_mask']
+        labels = example['labels']
+        print(f"Example {i+1}:")
+        print(f"Input IDs: {input_ids}")
+        print(f"Attention Mask: {attention_mask}")
+        print(f"Labels: {labels}\n")
+
+# Print tokenized examples from the training set
+print_tokenized_examples("train", tokenized_datasets["train"])
+
+# Print tokenized examples from the validation set
+print_tokenized_examples("validation", tokenized_datasets["validation"])
+
 # Initialize the data collator
 data_collator = DataCollatorForSeq2Seq(
     tokenizer,
