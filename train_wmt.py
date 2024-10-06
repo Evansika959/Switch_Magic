@@ -38,8 +38,8 @@ print_examples("validation", dataset["validation"])
 
 # Preprocess the data with reduced max_length
 def preprocess_function(examples):
-    sources = examples['de']
-    targets = examples['en']
+    sources = examples['translation']['de']
+    targets = examples['translation']['en']
     
     # Tokenize the source sentences
     model_inputs = tokenizer(
