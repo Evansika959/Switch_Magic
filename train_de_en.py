@@ -49,8 +49,8 @@ train_dataset, val_dataset, _ = random_split(tokenized_dataset["train"], [train_
 data_collator = DataCollatorWithPadding(tokenizer, padding=True)
 
 # Create DataLoaders
-train_dataloader = DataLoader(train_dataset, batch_size=128, shuffle=True, collate_fn=data_collator)
-val_dataloader = DataLoader(val_dataset, batch_size=128, shuffle=False, collate_fn=data_collator)
+train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=data_collator)
+val_dataloader = DataLoader(val_dataset, batch_size=64, shuffle=False, collate_fn=data_collator)
 
 # Step 4: Fine-tune the Model
 # Set the device
