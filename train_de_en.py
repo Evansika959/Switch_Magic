@@ -47,9 +47,8 @@ train_dataset, val_dataset = random_split(tokenized_dataset["train"], [train_siz
 data_collator = DataCollatorWithPadding(tokenizer, padding=True)
 
 # take only 10% of the dataset for faster training
-train_dataset = train_dataset.select(range(0, len(train_dataset), len(train_dataset) // 10))
-
-val_dataset = val_dataset.select(range(0, len(val_dataset), len(val_dataset) // 10))
+train_dataset = train_dataset[list(range(0, len(train_dataset), len(train_dataset) // 10))]
+val_dataset = val_dataset[list(range(0, len(val_dataset), len(val_dataset) // 10))]
 
 # Create DataLoaders
 train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=data_collator)
