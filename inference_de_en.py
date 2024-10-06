@@ -20,13 +20,14 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-random.shuffle(dataset["test"])
-
 test_num = 5
 
 for i in range(test_num):
+    # randomly select 1 test case
+    idx = random.randint(0, len(dataset["test"]))
+
     # Select a test case from the dataset
-    test_case = dataset["test"][i]
+    test_case = dataset["test"][idx]
     print("Original English Sentence:")
     print(test_case["translation"]["en"])
 
