@@ -39,21 +39,18 @@ print(tokenized_dataset["train"][0:3])
 
 # Step 3: Dataset Splitting
 # Split the dataset into training and validation sets (90% train, 10% validation)
-train_size = int(0.9 * len(tokenized_dataset["train"]))
-val_size = len(tokenized_dataset["train"]) - train_size
+test_size = int(0.9 * len(tokenized_dataset["train"]))
+train_size = int(0.8 * test_size)
+val_size = len(tokenized_dataset["train"]) - train_size - test_size
 
-train_dataset, val_dataset = random_split(tokenized_dataset["train"], [train_size, val_size])
+train_dataset, val_dataset, _ = random_split(tokenized_dataset["train"], [train_size, val_size, test_size])
 
 # Initialize DataCollator
 data_collator = DataCollatorWithPadding(tokenizer, padding=True)
 
-# take only 10% of the dataset for faster training
-train_dataset = train_dataset[list(range(0, len(train_dataset), len(train_dataset) // 10))]
-val_dataset = val_dataset[list(range(0, len(val_dataset), len(val_dataset) // 10))]
-
 # Create DataLoaders
-train_dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=data_collator)
-val_dataloader = DataLoader(val_dataset, batch_size=64, shuffle=False, collate_fn=data_collator)
+train_dataloader = DataLoader(train_dataset, batch_size=128, shuffle=True, collate_fn=data_collator)
+val_dataloader = DataLoader(val_dataset, batch_size=128, shuffle=False, collate_fn=data_collator)
 
 # Step 4: Fine-tune the Model
 # Set the device
@@ -62,7 +59,7 @@ model.to(device)
 print("Training on:", device)
 
 # Define optimizer and scheduler
-optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
+optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=2, verbose=True)
 
 # Define loss function
