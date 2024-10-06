@@ -36,9 +36,6 @@ print_examples("train", dataset["train"])
 # Print examples from the validation set
 print_examples("validation", dataset["validation"])
 
-# Print examples from the test set
-print_examples("test", dataset["test"])
-
 # Preprocess the data with reduced max_length
 def preprocess_function(examples):
     sources = examples['de']
@@ -47,7 +44,7 @@ def preprocess_function(examples):
     # Tokenize the source sentences
     model_inputs = tokenizer(
         sources,
-        max_length=512,           # Reduced from typical higher values
+        max_length=256,           # Reduced from typical higher values
         truncation=True,
         padding='max_length'     # Optional: adjust padding as needed
     )
@@ -56,7 +53,7 @@ def preprocess_function(examples):
     with tokenizer.as_target_tokenizer():
         labels = tokenizer(
             targets,
-            max_length=512,       # Reduced from typical higher values
+            max_length=256,       # Reduced from typical higher values
             truncation=True,
             padding='max_length' # Optional: adjust padding as needed
         )
