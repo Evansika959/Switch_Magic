@@ -18,14 +18,24 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
 
+# Print the first few items in the dataset to debug
+print("First few items in the dataset:")
+print(dataset["train"][0:3])
+
 # Function to tokenize and preprocess data
 def preprocess_function(examples):
-    model_inputs = tokenizer(examples["translation"]["en"], text_target=examples["translation"]["de"],
+    en_texts = [ex["en"] for ex in examples["translation"]]
+    de_texts = [ex["de"] for ex in examples["translation"]]
+    model_inputs = tokenizer(en_texts, text_target=de_texts,
                              max_length=128, truncation=True, padding="max_length", return_tensors="pt")
     return model_inputs
 
 # Apply preprocessing
 tokenized_dataset = dataset.map(preprocess_function, batched=True, remove_columns=dataset["train"].column_names)
+
+# Print the first few items in the tokenized dataset to debug
+print("First few items in the tokenized dataset:")
+print(tokenized_dataset["train"][0:3])
 
 # Step 3: Dataset Splitting
 # Split the dataset into training and validation sets (90% train, 10% validation)
