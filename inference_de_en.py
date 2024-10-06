@@ -8,7 +8,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
     "google/switch-base-8",
     device_map="auto"  # Automatically distribute the model across available devices
 )
-# model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
+model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 
 # Set the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
