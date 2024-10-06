@@ -49,3 +49,26 @@ for i in range(test_num):
 
     print("Reference German Translation:")
     print(test_case["translation"]["de"])
+    print("\n")
+
+
+
+# Tokenize the input
+input_text = "What is this?"
+inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
+
+print("Original English Sentence:")
+print(input_text)
+
+# Generate translation
+model.eval()
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
+
+# Decode the generated tokens
+generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+# Print the generated translation
+print("Generated German Translation:")
+print(generated_text)
+
