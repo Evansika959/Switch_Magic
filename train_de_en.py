@@ -40,7 +40,7 @@ print(tokenized_dataset["train"][0:3])
 # Step 3: Dataset Splitting
 # Split the dataset into training and validation sets (90% train, 10% validation)
 test_size = int(0.9 * len(tokenized_dataset["train"]))
-train_size = int(0.8 * test_size)
+train_size = int(0.8 * len(tokenized_dataset["train"]) - test_size)
 val_size = len(tokenized_dataset["train"]) - train_size - test_size
 
 train_dataset, val_dataset, _ = random_split(tokenized_dataset["train"], [train_size, val_size, test_size])
