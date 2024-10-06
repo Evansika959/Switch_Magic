@@ -19,11 +19,11 @@ dataset = load_dataset("wmt16", "de-en")
 
 # Select a test case from the dataset
 test_case = dataset["test"][0]
-print("Original German Sentence:")
-print(test_case["translation"]["de"])
+print("Original English Sentence:")
+print(test_case["translation"]["en"])
 
 # Tokenize the input
-input_text = "Translate to English:" + test_case["translation"]["de"]
+input_text = test_case["translation"]["en"]
 inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
 
 # Generate translation
@@ -35,5 +35,5 @@ with torch.no_grad():
 generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 # Print the generated translation
-print("Generated English Translation:")
+print("Generated German Translation:")
 print(generated_text)
