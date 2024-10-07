@@ -915,7 +915,7 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
         print("num of encoder layers:", len(self.block))
 
         self.final_layer_norm = SwitchTransformersLayerNorm(config.d_model, eps=config.layer_norm_epsilon)
-        self.dropout = nn.Dropout(config.num_layers)
+        self.dropout = nn.Dropout(config.dropout_rate)
 
         # Initialize weights and apply final processing
         self.post_init()
