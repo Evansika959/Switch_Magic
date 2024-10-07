@@ -2,6 +2,8 @@ import torch
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 from transformers import AutoTokenizer
 from datasets import load_dataset
+from torchsummary import summary
+
 
 # Load the tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("google/switch-base-8")
@@ -14,6 +16,7 @@ model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.p
 # Set the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
+
 
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
@@ -57,6 +60,9 @@ test_num = 5
 # Tokenize the input
 input_text = "What is this?"
 inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
+
+summary(model, inputs)  # Replace input_size with the dimensions of your input
+
 
 print("Original English Sentence:")
 print(input_text)

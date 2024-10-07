@@ -12,7 +12,6 @@ config = AutoConfig.from_pretrained(model_name)
 # Load the model
 model = AutoModel.from_pretrained(model_name, config=config)
 print(config)
-summary(model, input_size=(1, 128, 512))  # Replace input_size with the dimensions of your input
 
 # Number of transformer layers
 num_layers = config.num_hidden_layers
