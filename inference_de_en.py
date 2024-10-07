@@ -3,6 +3,7 @@ from transformers_cp.src.transformers.models.switch_transformers import SwitchTr
 from transformers import AutoTokenizer
 from datasets import load_dataset
 from torchsummary import summary
+import re
 
 
 # Load the tokenizer and model
@@ -54,12 +55,6 @@ test_num = 5
 #     print(test_case["translation"]["de"])
 #     print("\n")
 
-for name, module in model.named_modules():
-    print(name)
-    print(module)
-    print("\n")
-
-
 # Tokenize the input
 input_text = "What is this?"
 inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
@@ -81,4 +76,13 @@ generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 # Print the generated translation
 print("Generated German Translation:")
 print(generated_text)
+
+# Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
+pattern = r'^encoder\..*\.mlp$'
+
+for name, module in model.named_modules():
+    if re.match(pattern, name):
+        print(name)
+        print(module.router_history)
+        print("\n")
 
