@@ -315,7 +315,7 @@ class SwitchTransformersSparseMLP(nn.Module):
 
         hidden_states = router_probs * next_states
 
-        self.router_history.append(expert_index)
+        self.router_history.append(expert_index.flatten())
 
         return hidden_states, (router_logits, expert_index)
 
