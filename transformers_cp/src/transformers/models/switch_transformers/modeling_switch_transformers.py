@@ -772,8 +772,9 @@ class SwitchTransformersBlock(nn.Module):
             attention_outputs = attention_outputs + cross_attention_outputs[2:]
 
         # Apply Feed Forward layer
-        hidden_states = self.layer[-1](hidden_states, output_router_logits)
         print("FFN input hidden_states:", hidden_states)
+
+        hidden_states = self.layer[-1](hidden_states, output_router_logits)
 
         if isinstance(hidden_states, tuple):
             hidden_states, router_tuple = hidden_states
