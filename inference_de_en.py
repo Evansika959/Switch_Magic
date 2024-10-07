@@ -61,7 +61,9 @@ test_num = 5
 input_text = "What is this?"
 inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
 
-summary(model,input_size=inputs['input_ids'].shape.long())  # Replace input_size with the dimensions of your input
+in_size = inputs['input_ids'].shape
+
+summary(model,input_size=in_size.long())  # Replace input_size with the dimensions of your input
 
 
 print("Original English Sentence:")
