@@ -296,7 +296,7 @@ class SwitchTransformersSparseMLP(nn.Module):
         expert_index = torch.argmax(router_mask, dim=-1)
 
         print("cnt:", self.cnt)
-        print("router_mask:", router_mask)
+        print("input hidden states for MLP: ", hidden_states)
         print("expert index: ", expert_index)
         self.cnt += 1
 
@@ -773,6 +773,7 @@ class SwitchTransformersBlock(nn.Module):
 
         # Apply Feed Forward layer
         hidden_states = self.layer[-1](hidden_states, output_router_logits)
+        print("FFN input hidden_states:", hidden_states)
 
         if isinstance(hidden_states, tuple):
             hidden_states, router_tuple = hidden_states
@@ -970,6 +971,8 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
             if self.embed_tokens is None:
                 raise ValueError("You have to initialize the model with valid token embeddings")
             inputs_embeds = self.embed_tokens(input_ids)
+
+        print("at stack inputs_embeds:", inputs_embeds)
 
         batch_size, seq_length = input_shape
 
