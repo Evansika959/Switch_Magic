@@ -295,8 +295,6 @@ class SwitchTransformersSparseMLP(nn.Module):
 
         print("cnt:", self.cnt)
         print("router_mask:", router_mask)
-        print("router_probs:", router_probs)
-        print("router_logits:", router_logits)
         self.cnt += 1
 
         # The routers introduced might not always map all the tokens, to a router, which means that some hidden states
