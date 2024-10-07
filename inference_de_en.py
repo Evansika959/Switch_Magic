@@ -78,7 +78,7 @@ print("Generated German Translation:")
 print(generated_text)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-pattern = r'^encoder\..*\.mlp$'
+pattern = r'^decoder\..*\.mlp$'
 
 for name, module in model.named_modules():
     if re.match(pattern, name):
