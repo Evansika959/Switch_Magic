@@ -26,7 +26,7 @@ for idx, key in enumerate(blocks):
 
 # Create a heatmap using matplotlib
 plt.figure(figsize=(10, 6))
-plt.imshow(activation_matrix, cmap="hot", interpolation="nearest")
+plt.imshow(activation_matrix, cmap="Blues", interpolation="none")
 plt.colorbar(label="Activation Count")
 plt.xticks(ticks=np.arange(max_experts), labels=[f"Expert {i}" for i in range(max_experts)])
 plt.yticks(ticks=np.arange(num_blocks), labels=blocks)

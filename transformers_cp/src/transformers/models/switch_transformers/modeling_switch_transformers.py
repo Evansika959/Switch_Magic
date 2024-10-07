@@ -295,9 +295,6 @@ class SwitchTransformersSparseMLP(nn.Module):
         router_mask, router_probs, router_logits = self.router(hidden_states)
         expert_index = torch.argmax(router_mask, dim=-1)
 
-        print("cnt:", self.cnt)
-        print("input hidden states for MLP: ", hidden_states)
-        print("expert index: ", expert_index)
         self.cnt += 1
 
         # The routers introduced might not always map all the tokens, to a router, which means that some hidden states
