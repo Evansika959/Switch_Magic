@@ -277,6 +277,8 @@ class SwitchTransformersSparseMLP(nn.Module):
 
         self.cnt = 1
 
+        self.router_history = []
+
     def forward(self, hidden_states):
         r"""
         Hold on, this will be slightly tricky to understand In the correct order, a MoE layer does the following:
@@ -295,6 +297,7 @@ class SwitchTransformersSparseMLP(nn.Module):
 
         print("cnt:", self.cnt)
         print("router_mask:", router_mask)
+        print("expert index: ", expert_index)
         self.cnt += 1
 
         # The routers introduced might not always map all the tokens, to a router, which means that some hidden states
@@ -314,6 +317,9 @@ class SwitchTransformersSparseMLP(nn.Module):
             )
 
         hidden_states = router_probs * next_states
+
+        self.router_history.append(expert_index)
+
         return hidden_states, (router_logits, expert_index)
 
 
@@ -905,9 +911,11 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
             self.block.append(
                 SwitchTransformersBlock(config, has_relative_attention_bias=bool(i == 0), is_sparse=is_sparse)
             )
+        
+        print("num of encoder layers:", len(self.block))
 
         self.final_layer_norm = SwitchTransformersLayerNorm(config.d_model, eps=config.layer_norm_epsilon)
-        self.dropout = nn.Dropout(config.dropout_rate)
+        self.dropout = nn.Dropout(config.num_layers)
 
         # Initialize weights and apply final processing
         self.post_init()
