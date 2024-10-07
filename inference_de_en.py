@@ -17,6 +17,8 @@ model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.p
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
+for name, module in model.named_children():
+    print(f"Module Name: {name}, Module Type: {module.__class__.__name__}")
 
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
