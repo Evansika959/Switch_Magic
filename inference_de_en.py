@@ -83,6 +83,6 @@ pattern = r'^decoder\..*\.mlp$'
 for name, module in model.named_modules():
     if re.match(pattern, name):
         print(name)
-        print(module.router_history)
+        # print(module.router_history)
         print("\n")
 
