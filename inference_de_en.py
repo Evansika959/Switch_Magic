@@ -1,5 +1,5 @@
 import torch
-from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP
 from transformers import AutoTokenizer
 from datasets import load_dataset
 from torchsummary import summary
@@ -78,12 +78,11 @@ print("Generated German Translation:")
 print(generated_text)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-pattern = r'^decoder\..*\.mlp$'
+pattern = r'^encoder\..*\.mlp$'
 
 for name, module in model.named_modules():
-    if re.match(pattern, name):
+    if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
         print(name)
-        print(module)
-        # print(module.router_history)
+        print(module.router_history)
         print("\n")
 
