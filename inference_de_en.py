@@ -85,9 +85,10 @@ encoder_router_history = {}
 for name, module in model.named_modules():
     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
         print(name)
-        print(module.router_history.squeeze())
-        encoder_router_history[name] = module.router_history.squeeze()
+        print(module.router_history)
+        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = [item for sublist in module.router_history for item in sublist]
         print("\n")
 
+print(encoder_router_history)
 
 
