@@ -86,7 +86,7 @@ for name, module in model.named_modules():
     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
         print(name)
         print(module.router_history)
-        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.stack(module.router_history).cpu().numpy()
+        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).cpu().numpy()
         print("\n")
 
 print(encoder_router_history)
