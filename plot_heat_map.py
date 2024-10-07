@@ -35,7 +35,7 @@ plt.ylabel("Encoder Block")
 plt.title("Heatmap of Activated Experts in Encoder Blocks")
 # plt.savefig("plots/{name}.png")
 
-def plot_heat_map(data,name="heatmap",title="Heatmap of Activated Experts in Encoder Blocks"):
+def plot_heat_map(data,filename="heatmap",title="Heatmap of Activated Experts in Encoder Blocks"):
     # Extract the list of experts activated in each block
     blocks = list(data.keys())
     num_blocks = len(blocks)
@@ -58,6 +58,6 @@ def plot_heat_map(data,name="heatmap",title="Heatmap of Activated Experts in Enc
     plt.xlabel("Expert Index")
     plt.ylabel("Layer Index")
     plt.title(title)
-    plt.savefig("plots/{name}.png")
+    plt.savefig(f"plots/{filename}.png")
 
 

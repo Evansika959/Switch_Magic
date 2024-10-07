@@ -4,6 +4,7 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 from torchsummary import summary
 import re
+from plot_heat_map import plot_heat_map
 
 
 # Load the tokenizer and model
@@ -91,4 +92,5 @@ for name, module in model.named_modules():
 
 print(encoder_router_history)
 
+plot_heat_map(encoder_router_history, filename="encoder_router_history", title="Router History of Encoder Blocks")
 
