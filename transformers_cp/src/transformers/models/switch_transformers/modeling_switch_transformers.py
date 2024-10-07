@@ -769,7 +769,6 @@ class SwitchTransformersBlock(nn.Module):
             attention_outputs = attention_outputs + cross_attention_outputs[2:]
 
         # Apply Feed Forward layer
-        print("FFN input hidden_states:", hidden_states)
 
         hidden_states = self.layer[-1](hidden_states, output_router_logits)
 
@@ -969,8 +968,6 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
             if self.embed_tokens is None:
                 raise ValueError("You have to initialize the model with valid token embeddings")
             inputs_embeds = self.embed_tokens(input_ids)
-
-        print("at stack inputs_embeds:", inputs_embeds)
 
         batch_size, seq_length = input_shape
 
