@@ -1,5 +1,6 @@
 import torch
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+from transformers import AutoTokenizer
 from datasets import load_dataset
 
 # Load the tokenizer and model
