@@ -291,6 +291,13 @@ class SwitchTransformersSparseMLP(nn.Module):
         router_mask, router_probs, router_logits = self.router(hidden_states)
         expert_index = torch.argmax(router_mask, dim=-1)
 
+        cnt = 1
+        print("cnt:", cnt)
+        print("router_mask:", router_mask)
+        print("router_probs:", router_probs)
+        print("router_logits:", router_logits)
+        cnt += 1
+
         # The routers introduced might not always map all the tokens, to a router, which means that some hidden states
         # can be unchanged from one layer to another. That is why the hidden states are cloned before updating only the seleced ones.
 

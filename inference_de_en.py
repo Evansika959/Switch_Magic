@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoTokenizer, SwitchTransformersForConditionalGeneration
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 from datasets import load_dataset
 
 # Load the tokenizer and model
