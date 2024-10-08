@@ -67,6 +67,7 @@ if TYPE_CHECKING:
             SwitchTransformersPreTrainedModel,
             SwitchTransformersSparseMLP,
             SwitchTransformersTop1Router,
+            SwitchTransformersAttention,
         )
 
 
