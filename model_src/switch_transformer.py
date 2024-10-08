@@ -479,6 +479,8 @@ class SwitchTransformersAttention(nn.Module):
         # past_key_value[0] is (batch_size, n_heads, q_len - 1, dim_per_head)
         batch_size, seq_length = hidden_states.shape[:2]
 
+        print("hidden_states:", hidden_states.shape)
+
         real_seq_length = seq_length
 
         if past_key_value is not None:
@@ -528,6 +530,8 @@ class SwitchTransformersAttention(nn.Module):
         # get query states
         query_states = shape(self.q(hidden_states))  # (batch_size, n_heads, seq_length, dim_per_head)
 
+        print("query_states:", query_states.shape)
+
         # get key/value states
         key_states = project(
             hidden_states, self.k, key_value_states, past_key_value[0] if past_key_value is not None else None
@@ -535,6 +539,10 @@ class SwitchTransformersAttention(nn.Module):
         value_states = project(
             hidden_states, self.v, key_value_states, past_key_value[1] if past_key_value is not None else None
         )
+
+        print("key_states:", key_states.shape)
+
+        print("value_states:", value_states.shape)
 
         # compute scores
         scores = torch.matmul(
