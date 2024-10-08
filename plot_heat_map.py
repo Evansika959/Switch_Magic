@@ -57,10 +57,6 @@ def plot_heat_map(data,filename="heatmap",title="Heatmap of Activated Experts in
     plt.figure(figsize=(10, 6))
     plt.imshow(activation_matrix, cmap="Blues", interpolation="none")
     plt.colorbar(label="Activation Count")
-     # Label the maximum value in each row
-    for i in range(num_blocks):
-        max_index = np.argmax(activation_matrix[i])
-        plt.text(max_index, i, f'{activation_matrix[i, max_index]:.2f}', ha='center', va='center', color='black', fontsize=10, fontweight='bold')
     plt.xticks(ticks=np.arange(max_experts), labels=[f"Expert {i}" for i in range(max_experts)])
     plt.yticks(ticks=np.arange(num_blocks), labels=blocks)
     plt.xlabel("Expert Index")

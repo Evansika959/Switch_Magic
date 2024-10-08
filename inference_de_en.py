@@ -80,8 +80,11 @@ print(generated_text)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 pattern = r'^encoder\..*\.mlp$'
+pattern2 = r'^decoder\..*\.mlp$'
+
 
 encoder_router_history = {}
+decoder_router_history = {}
 
 for name, module in model.named_modules():
     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
@@ -89,8 +92,12 @@ for name, module in model.named_modules():
         print(module.router_history)
         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         print("\n")
+    if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
+        print(name)
+        print(module.router_history)
+        decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+        print("\n")
 
-print(encoder_router_history)
 
 plot_heat_map(encoder_router_history, filename="encoder_router_history", title="Router History of Encoder Blocks")
-
+plot_heat_map(decoder_router_history, filename="decoder_router_history", title="Router History of Decoder Blocks")
