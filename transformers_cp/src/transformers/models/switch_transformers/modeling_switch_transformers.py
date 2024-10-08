@@ -387,6 +387,9 @@ class SwitchTransformersAttention(nn.Module):
         self.pruned_heads = set()
         self.gradient_checkpointing = False
 
+        print("q linear shape:", self.q)
+        print("o linear shape:", self.o)
+
     def prune_heads(self, heads):
         if len(heads) == 0:
             return
