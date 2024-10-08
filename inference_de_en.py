@@ -1,5 +1,5 @@
 import torch
-from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP, SwitchTransformersAttention
 from transformers import AutoTokenizer
 from datasets import load_dataset
 from torchsummary import summary
