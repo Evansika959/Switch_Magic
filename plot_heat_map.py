@@ -49,6 +49,8 @@ def plot_heat_map(data,filename="heatmap",title="Heatmap of Activated Experts in
         for expert in data[key]:
             activation_matrix[idx, expert] += 1
 
+    activation_matrix = activation_matrix / activation_matrix.max(axis=1, keepdims=True)
+
     # Create a heatmap using matplotlib
     plt.figure(figsize=(10, 6))
     plt.imshow(activation_matrix, cmap="Blues", interpolation="none")
