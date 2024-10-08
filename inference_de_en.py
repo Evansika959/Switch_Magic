@@ -25,7 +25,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 10
+test_num = 200
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -54,6 +54,7 @@ for i in range(test_num):
 
     print("Reference German Translation:")
     print(test_case["translation"]["de"])
+    print(f"Case {i+1} of {test_num} Finished")
     print("\n")
 
 # Tokenize the input
