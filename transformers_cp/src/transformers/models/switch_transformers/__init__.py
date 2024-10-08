@@ -67,7 +67,6 @@ if TYPE_CHECKING:
             SwitchTransformersPreTrainedModel,
             SwitchTransformersSparseMLP,
             SwitchTransformersTop1Router,
-            SwitchTransformersAttention,
         )
 
 
@@ -83,5 +82,4 @@ from .modeling_switch_transformers import (
         SwitchTransformersPreTrainedModel,
         SwitchTransformersSparseMLP,
         SwitchTransformersTop1Router,
-        SwitchTransformersAttention,
     )
