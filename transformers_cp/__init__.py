@@ -1,1 +1,1 @@
-from .src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+from .src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP, SwitchTransformersAttention
