@@ -3,7 +3,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, SwitchTransformersForConditionalGeneration
 from captum.attr import LayerLRP
-from captum.attr._utils.lrp_rules import EpsilonRule
+from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -33,16 +33,6 @@ def custom_forward(input_ids, attention_mask):
     return attentions_mean.sum(dim=1)
 
 # Step 4: Set Up LayerLRP
-# We focus on the self-attention layer in the first decoder block
-def assign_lrp_rules(model):
-    for name, module in model.named_modules():
-        if isinstance(module, torch.nn.Embedding):
-            # Assign EpsilonRule to Embedding layer
-            setattr(module, 'rule', EpsilonRule())
-        # Add additional conditions for other layer types if necessary
-
-assign_lrp_rules(model)
-
 target_layer = model.decoder.block[0].layer[0].SelfAttention
 layer_lrp = LayerLRP(model, layer=target_layer)
 

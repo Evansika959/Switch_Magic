@@ -1,112 +1,79 @@
+# layer_lrp_attention_heads.py
+
 import torch
-from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP
 from transformers import AutoTokenizer
-from datasets import load_dataset
-from torchsummary import summary
-import re
-from plot_heat_map import plot_heat_map
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP, SwitchTransformersLayerNorm
+from captum.attr import LayerLRP
+from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
+import matplotlib.pyplot as plt
+import numpy as np
 
+# Step 1: Load the Model and Tokenizer
+model_name = 'google/switch-base-8'  # Replace with 'google/switch_transformer-base-8' when available
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
+model.eval()
 
-# Load the tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained("google/switch-base-8")
-model = SwitchTransformersForConditionalGeneration.from_pretrained(
-    "google/switch-base-8",
-    device_map="auto"  # Automatically distribute the model across available devices
+print(model.config)
+print(model)
+
+# Step 2: Prepare the Input Text
+text = "The quick brown fox jumps over the lazy dog."
+inputs = tokenizer(text, return_tensors='pt')
+input_ids = inputs['input_ids']
+attention_mask = inputs['attention_mask']
+
+# Step 3: Define a Custom Forward Function
+def custom_forward(input_ids, attention_mask):
+    outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    # Get decoder attentions from the first layer
+    attentions = outputs.decoder_attentions[0]  # Shape: (batch_size, num_heads, seq_len, seq_len)
+    # Aggregate attentions over the sequence dimension
+    attentions_mean = attentions.mean(dim=-1).mean(dim=-1)  # Shape: (batch_size, num_heads)
+    # Sum over heads to get a scalar output for attribution
+    return attentions_mean.sum(dim=1)
+
+# Step 4: Set Up LayerLRP
+# We focus on the self-attention layer in the first decoder block
+def assign_lrp_rules(model):
+    for name, module in model.named_modules():
+        if isinstance(module, torch.nn.Embedding):
+            # Assign EpsilonRule to Embedding layer
+            setattr(module, 'rule', EpsilonRule())
+        elif isinstance(module, SwitchTransformersLayerNorm):
+            # Assign IdentityRule to LayerNorm layer
+            setattr(module, 'rule', IdentityRule())
+        # Add additional conditions for other layer types if necessary
+
+assign_lrp_rules(model)
+
+target_layer = model.decoder.block[0].layer[0].SelfAttention
+layer_lrp = LayerLRP(model, layer=target_layer)
+
+# layer_lrp.rule_map[torch.nn.Embedding] = EpsilonRule()
+print(layer_lrp)
+
+# Step 5: Compute Attributions
+attributions = layer_lrp.attribute(
+    input_ids,
+    # forward_func=custom_forward,
+    additional_forward_args=(attention_mask,),
+    attribute_to_layer_input=False
 )
-model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 
-# Set the device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+# Step 6: Extract and Analyze Attention Head Importance
+# Convert attributions to numpy array
+attr_np = attributions.detach().numpy()[0]  # Assuming batch_size=1
 
-# Load the WMT dataset
-dataset = load_dataset("wmt16", "de-en")
+# Normalize the attributions
+attr_np_normalized = (attr_np - attr_np.min()) / (attr_np.max() - attr_np.min())
 
-# Randomize the test iteration
-import random
-random.seed(42)
-test_num = 1
-
-for i in range(test_num):
-    # randomly select 1 test case
-    idx = random.randint(0, len(dataset["test"]))
-
-    # Select a test case from the dataset
-    test_case = dataset["test"][idx]
-    print("Original English Sentence:")
-    print(test_case["translation"]["en"])
-
-    # Tokenize the input
-    input_text = test_case["translation"]["en"]
-    inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
-
-    # Generate translation
-    model.eval()
-    with torch.no_grad():
-        outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
-
-    # Decode the generated tokens
-    generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    # Print the generated translation
-    print("Generated German Translation:")
-    print(generated_text)
-
-    print("Reference German Translation:")
-    print(test_case["translation"]["de"])
-    print(f"Case {i+1} of {test_num} Finished")
-    print("\n")
-
-# Tokenize the input
-# input_text = "What is this?"
-# inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
-
-# print("Original English Sentence:")
-# print(input_text)
-
-# print("Tokenized input:")
-# print(inputs)
-
-# # Generate translation
-# model.eval()
-# with torch.no_grad():
-#     outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
-
-# # Decode the generated tokens
-# generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-# # Print the generated translation
-# print("Generated German Translation:")
-# print(generated_text)
-
-# Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-pattern = r'^encoder\..*\.mlp$'
-pattern2 = r'^decoder\..*\.mlp$'
-
-
-encoder_router_history = {}
-decoder_router_history = {}
-
-for name, module in model.named_modules():
-    if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        # print(module.router_history)
-        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        # print("\n")
-    if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        # print(module.router_history)
-        decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        # print("\n")
-
-    
-    print(name)
-    print(module)
-    print("\n")
-
-
-# plot_heat_map(encoder_router_history, filename="encoder_router_history", title="Router History of Encoder Blocks")
-# plot_heat_map(decoder_router_history, filename="decoder_router_history", title="Router History of Decoder Blocks")
-
-#calculate LRP
+# Step 7: Visualize the Attributions
+num_heads = attr_np.shape[0]
+plt.figure(figsize=(10, 6))
+plt.bar(range(num_heads), attr_np_normalized)
+plt.xlabel('Attention Head')
+plt.ylabel('Normalized Attribution Score')
+plt.title('Attention Head Importance')
+plt.xticks(range(num_heads))
 
