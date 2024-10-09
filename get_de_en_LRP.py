@@ -57,14 +57,15 @@ def assign_lrp_rules(model):
 assign_lrp_rules(model)
 
 target_layer = model.decoder.block[0].layer[0].SelfAttention
-layer_lrp = LayerLRP(model, layer=target_layer)
+layer_lrp = LayerLRP(custom_forward, layer=target_layer)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
     input_embeds,
     # forward_func=custom_forward,
     additional_forward_args=(attention_mask, decoder_inputs_embeds, decoder_attention_mask),
-    attribute_to_layer_input=False
+    attribute_to_layer_input=False,
+    verbose=True
 )
 
 # Step 6: Extract and Analyze Attention Head Importance
