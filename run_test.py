@@ -39,7 +39,7 @@ layer_lrp = LayerLRP(model, layer=target_layer)
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
     input_ids,
-    forward_func=custom_forward,
+    # forward_func=custom_forward,
     additional_forward_args=(attention_mask,),
     attribute_to_layer_input=False
 )
