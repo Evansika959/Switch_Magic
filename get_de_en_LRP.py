@@ -20,12 +20,16 @@ model.train()
 text = "What is this?"
 inputs = tokenizer(text, return_tensors='pt')
 input_ids = inputs['input_ids']
+input_embeds = model.get_input_embeddings()(input_ids)
+print(input_embeds)
 attention_mask = inputs['attention_mask']
 
 # Prepare decoder_input_ids
 target_text = "Was ist"
 decoder_inputs = tokenizer(target_text, return_tensors='pt')
 decoder_input_ids = decoder_inputs['input_ids']
+decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids)
+print(decoder_inputs_embeds)
 decoder_attention_mask = decoder_inputs['attention_mask']
 
 # Step 3: Define a Custom Forward Function
@@ -57,9 +61,9 @@ layer_lrp = LayerLRP(model, layer=target_layer)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
-    input_ids,
+    input_embeds,
     # forward_func=custom_forward,
-    additional_forward_args=(attention_mask, decoder_input_ids, decoder_attention_mask),
+    additional_forward_args=(attention_mask, decoder_inputs_embeds, decoder_attention_mask),
     attribute_to_layer_input=False
 )
 
