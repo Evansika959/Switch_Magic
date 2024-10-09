@@ -560,7 +560,6 @@ class SwitchTransformersAttention(nn.Module):
                     position_bias.requires_grad = True
             else:
                 position_bias = self.compute_bias(real_seq_length, key_length, device=scores.device)
-                position_bias.requires_grad = True
 
             # if key and values are already calculated
             # we want only the last query position bias
@@ -910,7 +909,11 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
             is_sparse = (i % sparse_step == 1 or sparse_step == 1) if sparse_step > 0 else False
 
             self.block.append(
-                SwitchTransformersBlock(config, has_relative_attention_bias=bool(i == 0), is_sparse=is_sparse)
+                #crucial changes here
+                #change relative attention bias to always False
+                # SwitchTransformersBlock(config, has_relative_attention_bias=bool(i == 0), is_sparse=is_sparse)
+                SwitchTransformersBlock(config, has_relative_attention_bias=False, is_sparse=is_sparse)
+
             )
         
         self.final_layer_norm = SwitchTransformersLayerNorm(config.d_model, eps=config.layer_norm_epsilon)
