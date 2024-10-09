@@ -20,8 +20,8 @@ model.train()
 text = "What is this?"
 inputs = tokenizer(text, return_tensors='pt')
 input_ids = inputs['input_ids']
-input_embeds = model.get_input_embeddings()(input_ids)
-print(input_embeds)
+inputs_embeds = model.get_input_embeddings()(input_ids)
+print(inputs_embeds)
 attention_mask = inputs['attention_mask']
 
 # Prepare decoder_input_ids
@@ -61,7 +61,7 @@ layer_lrp = LayerLRP(model, layer=target_layer)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
-    inputs = input_embeds,
+    inputs = inputs_embeds,
     additional_forward_args=(None, attention_mask, None, decoder_inputs_embeds, decoder_attention_mask),
     attribute_to_layer_input=False,
     verbose=True

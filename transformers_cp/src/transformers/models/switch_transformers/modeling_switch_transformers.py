@@ -466,6 +466,7 @@ class SwitchTransformersAttention(nn.Module):
             max_distance=self.relative_attention_max_distance,
         )
         values = self.relative_attention_bias(relative_position_bucket)  # shape (query_length, key_length, num_heads)
+        values.requires_grad = True
         values = values.permute([2, 0, 1]).unsqueeze(0)  # shape (1, num_heads, query_length, key_length)
         return values
 
@@ -1579,6 +1580,14 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
         >>> # . To, let’s say you have a dog. To summarize:
         >>> # Since the model has been trained on MLM, this will output gibberish
         ```"""
+
+        #print the arguments received
+        print("input_ids: ", input_ids)
+        print("attention_mask: ", attention_mask)
+        print("decoder_input_ids: ", decoder_input_ids)
+        print("decoder_attention_mask: ", decoder_attention_mask)
+        print("input_embeds: ", inputs_embeds)
+        print("decoder_inputs_embeds: ", decoder_inputs_embeds)
 
         use_cache = use_cache if use_cache is not None else self.config.use_cache
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
