@@ -67,6 +67,7 @@ def assign_lrp_rules(model):
             # Assign EpsilonRule to Embedding layer
             setattr(module, 'rule', EpsilonRule())
         elif isinstance(module, SwitchTransformersLayerNorm):
+            print("here")
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
         # Add additional conditions for other layer types if necessary
