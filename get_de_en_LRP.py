@@ -62,7 +62,7 @@ layer_lrp = LayerLRP(model, layer=target_layer)
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
     inputs = input_embeds,
-    additional_forward_args=(attention_mask, decoder_input_ids, decoder_attention_mask),
+    additional_forward_args=(None, attention_mask, None, decoder_inputs_embeds, decoder_attention_mask),
     attribute_to_layer_input=False,
     verbose=True
 )
