@@ -29,8 +29,15 @@ def custom_forward(input_ids, attention_mask):
     # Sum over heads to get a scalar output for attribution
     return attentions_mean.sum(dim=1)
 
-for name, module in model.named_modules():
-    print(name, module)
+# tranverse the model recursively
+def print_all_leaf(model):
+    for layer in model.children():
+        if len(list(layer.children())) == 0:
+            print(layer)
+        else:
+            print_all_leaf(layer)
+
+print_all_leaf(model)
 
 # Step 4: Set Up LayerLRP
 target_layer = model.decoder.block[0].layer[0].SelfAttention
