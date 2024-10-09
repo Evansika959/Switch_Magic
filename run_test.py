@@ -37,7 +37,8 @@ def custom_forward(input_ids, attention_mask):
 target_layer = model.decoder.block[0].layer[0].SelfAttention
 layer_lrp = LayerLRP(model, layer=target_layer)
 
-layer_lrp.rule_map[torch.nn.Embedding] = EpsilonRule()
+# layer_lrp.rule_map[torch.nn.Embedding] = EpsilonRule()
+print(layer_lrp)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
