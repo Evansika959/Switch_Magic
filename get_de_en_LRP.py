@@ -2,7 +2,7 @@
 
 import torch
 from transformers import AutoTokenizer
-from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP, SwitchTransformersLayerNorm
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 from captum.attr import LayerLRP
 from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
 import matplotlib.pyplot as plt
@@ -40,7 +40,7 @@ def assign_lrp_rules(model):
         if isinstance(module, torch.nn.Embedding):
             # Assign EpsilonRule to Embedding layer
             setattr(module, 'rule', EpsilonRule())
-        elif isinstance(module, SwitchTransformersLayerNorm):
+        elif isinstance(module, ):
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
         # Add additional conditions for other layer types if necessary
