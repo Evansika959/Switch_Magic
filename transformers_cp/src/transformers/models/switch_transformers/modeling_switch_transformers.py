@@ -1530,6 +1530,7 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
     @replace_return_docstrings(output_type=Seq2SeqMoEOutput, config_class=_CONFIG_FOR_DOC)
     def forward(
         self,
+        inputs_embeds: Optional[torch.FloatTensor] = None,
         input_ids: Optional[torch.LongTensor] = None,
         attention_mask: Optional[torch.FloatTensor] = None,
         decoder_input_ids: Optional[torch.LongTensor] = None,
@@ -1539,7 +1540,6 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
         cross_attn_head_mask: Optional[torch.Tensor] = None,
         encoder_outputs: Optional[Tuple[Tuple[torch.Tensor]]] = None,
         past_key_values: Optional[Tuple[Tuple[torch.Tensor]]] = None,
-        inputs_embeds: Optional[torch.FloatTensor] = None,
         decoder_inputs_embeds: Optional[torch.FloatTensor] = None,
         labels: Optional[torch.LongTensor] = None,
         use_cache: Optional[bool] = None,
@@ -1579,6 +1579,7 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
         >>> # . To, let’s say you have a dog. To summarize:
         >>> # Since the model has been trained on MLM, this will output gibberish
         ```"""
+
         use_cache = use_cache if use_cache is not None else self.config.use_cache
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
