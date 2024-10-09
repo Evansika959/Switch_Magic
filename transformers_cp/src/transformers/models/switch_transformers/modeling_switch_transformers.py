@@ -466,7 +466,6 @@ class SwitchTransformersAttention(nn.Module):
             max_distance=self.relative_attention_max_distance,
         )
         values = self.relative_attention_bias(relative_position_bucket)  # shape (query_length, key_length, num_heads)
-        values.requires_grad = True
         values = values.permute([2, 0, 1]).unsqueeze(0)  # shape (1, num_heads, query_length, key_length)
         return values
 
@@ -561,6 +560,7 @@ class SwitchTransformersAttention(nn.Module):
                     position_bias.requires_grad = True
             else:
                 position_bias = self.compute_bias(real_seq_length, key_length, device=scores.device)
+                position_bias.requires_grad = True
 
             # if key and values are already calculated
             # we want only the last query position bias
