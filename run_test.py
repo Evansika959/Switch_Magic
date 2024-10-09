@@ -1,14 +1,58 @@
-# pip install accelerate
-from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+# layer_lrp_attention_heads.py
 
-from transformers import AutoTokenizer
+import torch
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from captum.attr import LayerLRP
+import matplotlib.pyplot as plt
+import numpy as np
 
-tokenizer = AutoTokenizer.from_pretrained("google/switch-base-64")
-model = SwitchTransformersForConditionalGeneration.from_pretrained("google/switch-base-8", device_map="auto")
+# Step 1: Load the Model and Tokenizer
+model_name = 'google/switch_transformer-base-8'  # Replace with 'google/switch_transformer-base-8' when available
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name, output_attentions=True)
+model.eval()
 
-input_text = "A <extra_id_0> walks into a bar a orders a <extra_id_1> with <extra_id_2> pinch of <extra_id_3>."
-input_ids = tokenizer(input_text, return_tensors="pt").input_ids.to(0)
+# Step 2: Prepare the Input Text
+text = "The quick brown fox jumps over the lazy dog."
+inputs = tokenizer(text, return_tensors='pt')
+input_ids = inputs['input_ids']
+attention_mask = inputs['attention_mask']
 
-outputs = model.generate(input_ids)
-print(tokenizer.decode(outputs[0]))
+# Step 3: Define a Custom Forward Function
+def custom_forward(input_ids, attention_mask):
+    outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    # Get decoder attentions from the first layer
+    attentions = outputs.decoder_attentions[0]  # Shape: (batch_size, num_heads, seq_len, seq_len)
+    # Aggregate attentions over the sequence dimension
+    attentions_mean = attentions.mean(dim=-1).mean(dim=-1)  # Shape: (batch_size, num_heads)
+    # Sum over heads to get a scalar output for attribution
+    return attentions_mean.sum(dim=1)
 
+# Step 4: Set Up LayerLRP
+# We focus on the self-attention layer in the first decoder block
+target_layer = model.decoder.block[0].layer[0].SelfAttention
+layer_lrp = LayerLRP(custom_forward, target_layer)
+
+# Step 5: Compute Attributions
+attributions = layer_lrp.attribute(
+    input_ids,
+    additional_forward_args=(attention_mask,),
+    attribute_to_layer_input=False
+)
+
+# Step 6: Extract and Analyze Attention Head Importance
+# Convert attributions to numpy array
+attr_np = attributions.detach().numpy()[0]  # Assuming batch_size=1
+
+# Normalize the attributions
+attr_np_normalized = (attr_np - attr_np.min()) / (attr_np.max() - attr_np.min())
+
+# Step 7: Visualize the Attributions
+num_heads = attr_np.shape[0]
+plt.figure(figsize=(10, 6))
+plt.bar(range(num_heads), attr_np_normalized)
+plt.xlabel('Attention Head')
+plt.ylabel('Normalized Attribution Score')
+plt.title('Attention Head Importance')
+plt.xticks(range(num_heads))
+plt.show()

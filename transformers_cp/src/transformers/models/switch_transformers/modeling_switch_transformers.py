@@ -388,8 +388,6 @@ class SwitchTransformersAttention(nn.Module):
         self.gradient_checkpointing = False
 
         
-        print(f"d_model{self.d_model} inner_dim {self.inner_dim}")
-
     def prune_heads(self, heads):
         if len(heads) == 0:
             return
@@ -555,12 +553,13 @@ class SwitchTransformersAttention(nn.Module):
             query_states, key_states.transpose(3, 2)
         )  # equivalent of torch.einsum("bnqd,bnkd->bnqk", query_states, key_states), compatible with onnx op>9
 
-        print("query_states", query_states.shape)
-        print("key_states", key_states.shape)
+        # print("query_states", query_states.shape)
+        # print("key_states", key_states.shape)
 
-        print("value_states", value_states.shape)
+        # print("value_states", value_states.shape)
 
         if position_bias is None:
+            print("computing position bias")
             if not self.has_relative_attention_bias:
                 position_bias = torch.zeros(
                     (1, self.n_heads, real_seq_length, key_length), device=scores.device, dtype=scores.dtype
@@ -579,6 +578,7 @@ class SwitchTransformersAttention(nn.Module):
                 position_bias = position_bias + mask  # (batch_size, n_heads, seq_length, key_length)
 
         if self.pruned_heads:
+            print("pruning heads")
             mask = torch.ones(position_bias.shape[1])
             mask[list(self.pruned_heads)] = 0
             position_bias_masked = position_bias[:, mask.bool()]
@@ -605,6 +605,7 @@ class SwitchTransformersAttention(nn.Module):
 
         if output_attentions:
             outputs = outputs + (attn_weights,)
+            print("ourputing attention weights")
         return outputs
 
 
