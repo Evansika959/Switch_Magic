@@ -57,7 +57,7 @@ def assign_lrp_rules(model):
 assign_lrp_rules(model)
 
 target_layer = model.decoder.block[0].layer[0].SelfAttention
-layer_lrp = LayerLRP(custom_forward, layer=target_layer)
+layer_lrp = LayerLRP(model.forward, layer=target_layer)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
