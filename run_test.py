@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Step 1: Load the Model and Tokenizer
-model_name = 'google/switch_transformer-base-8'  # Replace with 'google/switch_transformer-base-8' when available
+model_name = 'google/switch-base-8'  # Replace with 'google/switch_transformer-base-8' when available
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
 model.eval()
