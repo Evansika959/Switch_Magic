@@ -57,6 +57,10 @@ def assign_lrp_rules(model):
 assign_lrp_rules(model)
 
 target_layer = model.decoder.block[0].layer[0].SelfAttention
+
+temp_out = model(input_ids=input_ids, attention_mask=attention_mask, decoder_input_ids=decoder_input_ids, decoder_attention_mask=decoder_attention_mask)
+print(temp_out)
+
 layer_lrp = LayerLRP(model, layer=target_layer)
 
 # Step 5: Compute Attributions
