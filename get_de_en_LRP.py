@@ -63,6 +63,7 @@ layer_lrp = LayerLRP(custom_forward, layer=target_layer)
 attributions = layer_lrp.attribute(
     input_ids,
     # forward_func=custom_forward,
+    forward_func=custom_forward,
     additional_forward_args=(attention_mask, decoder_input_ids, decoder_attention_mask),
     attribute_to_layer_input=False,
     verbose=True
