@@ -66,7 +66,7 @@ def assign_lrp_rules(model):
         if isinstance(module, torch.nn.Embedding):
             # Assign EpsilonRule to Embedding layer
             setattr(module, 'rule', EpsilonRule())
-        elif isinstance(module, ):
+        elif isinstance(module, SwitchTransformersLayerNorm):
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
         # Add additional conditions for other layer types if necessary
