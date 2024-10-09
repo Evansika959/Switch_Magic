@@ -3,6 +3,7 @@
 import torch
 from transformers import AutoTokenizer
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+import transformers_cp.src.transformers.models.switch_transformers
 from captum.attr import LayerLRP
 from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
 import matplotlib.pyplot as plt
@@ -40,9 +41,6 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
 model.eval()
 
-print(model.config)
-print(model)
-
 # Step 2: Prepare the Input Text
 text = "The quick brown fox jumps over the lazy dog."
 inputs = tokenizer(text, return_tensors='pt')
@@ -66,7 +64,7 @@ def assign_lrp_rules(model):
         if isinstance(module, torch.nn.Embedding):
             # Assign EpsilonRule to Embedding layer
             setattr(module, 'rule', EpsilonRule())
-        elif isinstance(module, SwitchTransformersLayerNorm):
+        elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerNorm):
             print("here")
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
