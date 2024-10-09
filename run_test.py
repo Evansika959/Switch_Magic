@@ -12,6 +12,9 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
 model.eval()
 
+print(model.config)
+print(model)
+
 # Step 2: Prepare the Input Text
 text = "The quick brown fox jumps over the lazy dog."
 inputs = tokenizer(text, return_tensors='pt')
