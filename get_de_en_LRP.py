@@ -17,18 +17,16 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, o
 model.eval()
 
 # Step 2: Prepare the Input Text
-text = "The quick brown fox jumps over the lazy dog."
+text = "What is this?"
 inputs = tokenizer(text, return_tensors='pt')
 input_ids = inputs['input_ids']
 attention_mask = inputs['attention_mask']
 
 # Prepare decoder_input_ids
-decoder_start_token_id = model.config.bos_token_id
-decoder_input_ids = torch.full(
-    (input_ids.shape[0], 1),
-    decoder_start_token_id,
-    dtype=torch.long,
-)
+target_text = "Was ist"
+decoder_inputs = tokenizer(target_text, return_tensors='pt')
+decoder_input_ids = decoder_inputs['input_ids']
+decoder_attention_mask = decoder_inputs['attention_mask']
 
 # Step 3: Define a Custom Forward Function
 def custom_forward(input_ids, attention_mask):
@@ -61,7 +59,7 @@ layer_lrp = LayerLRP(model, layer=target_layer)
 attributions = layer_lrp.attribute(
     input_ids,
     # forward_func=custom_forward,
-    additional_forward_args=(attention_mask, decoder_input_ids),
+    additional_forward_args=(attention_mask, decoder_input_ids, decoder_attention_mask),
     attribute_to_layer_input=False
 )
 
