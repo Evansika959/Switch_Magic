@@ -1,7 +1,7 @@
 # layer_lrp_attention_heads.py
 
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, SwitchTransformersForConditionalGeneration
 from captum.attr import LayerLRP
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 # Step 1: Load the Model and Tokenizer
 model_name = 'google/switch_transformer-base-8'  # Replace with 'google/switch_transformer-base-8' when available
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name, output_attentions=True)
+model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
 model.eval()
 
 # Step 2: Prepare the Input Text
@@ -55,4 +55,4 @@ plt.xlabel('Attention Head')
 plt.ylabel('Normalized Attribution Score')
 plt.title('Attention Head Importance')
 plt.xticks(range(num_heads))
-plt.show()
+
