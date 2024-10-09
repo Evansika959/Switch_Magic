@@ -26,7 +26,8 @@ attention_mask = inputs['attention_mask']
 decoder_start_token_id = model.config.bos_token_id
 decoder_input_ids = torch.full(
     (input_ids.shape[0], 1),
-    decoder_start_token_id
+    decoder_start_token_id,
+    dtype=torch.long,
 )
 
 # Step 3: Define a Custom Forward Function
