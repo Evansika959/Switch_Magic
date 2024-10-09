@@ -34,18 +34,20 @@ def custom_forward(input_ids, attention_mask):
 
 # Step 4: Set Up LayerLRP
 # We focus on the self-attention layer in the first decoder block
-target_layer = model.decoder.block[0].layer[0].SelfAttention
-layer_lrp = LayerLRP(model, layer=target_layer)
-
-# layer_lrp.rule_map[torch.nn.Embedding] = EpsilonRule()
-print(layer_lrp)
-
 def assign_lrp_rules(model):
     for name, module in model.named_modules():
         if isinstance(module, torch.nn.Embedding):
             # Assign EpsilonRule to Embedding layer
             setattr(module, 'rule', EpsilonRule())
         # Add additional conditions for other layer types if necessary
+
+assign_lrp_rules(model)
+
+target_layer = model.decoder.block[0].layer[0].SelfAttention
+layer_lrp = LayerLRP(model, layer=target_layer)
+
+# layer_lrp.rule_map[torch.nn.Embedding] = EpsilonRule()
+print(layer_lrp)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
