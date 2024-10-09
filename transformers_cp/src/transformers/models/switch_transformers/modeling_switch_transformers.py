@@ -489,8 +489,6 @@ class SwitchTransformersAttention(nn.Module):
         # past_key_value[0] is (batch_size, n_heads, q_len - 1, dim_per_head)
         batch_size, seq_length = hidden_states.shape[:2]
 
-        print("hidden_states", hidden_states.shape)
-
         real_seq_length = seq_length
 
         if past_key_value is not None:
@@ -553,13 +551,7 @@ class SwitchTransformersAttention(nn.Module):
             query_states, key_states.transpose(3, 2)
         )  # equivalent of torch.einsum("bnqd,bnkd->bnqk", query_states, key_states), compatible with onnx op>9
 
-        # print("query_states", query_states.shape)
-        # print("key_states", key_states.shape)
-
-        # print("value_states", value_states.shape)
-
         if position_bias is None:
-            print("computing position bias")
             if not self.has_relative_attention_bias:
                 position_bias = torch.zeros(
                     (1, self.n_heads, real_seq_length, key_length), device=scores.device, dtype=scores.dtype
@@ -605,7 +597,6 @@ class SwitchTransformersAttention(nn.Module):
 
         if output_attentions:
             outputs = outputs + (attn_weights,)
-            print("ourputing attention weights")
         return outputs
 
 
@@ -921,8 +912,6 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
                 SwitchTransformersBlock(config, has_relative_attention_bias=bool(i == 0), is_sparse=is_sparse)
             )
         
-        print("num of encoder layers:", len(self.block))
-
         self.final_layer_norm = SwitchTransformersLayerNorm(config.d_model, eps=config.layer_norm_epsilon)
         self.dropout = nn.Dropout(config.dropout_rate)
 
