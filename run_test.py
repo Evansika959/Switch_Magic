@@ -34,11 +34,12 @@ def custom_forward(input_ids, attention_mask):
 # Step 4: Set Up LayerLRP
 # We focus on the self-attention layer in the first decoder block
 target_layer = model.decoder.block[0].layer[0].SelfAttention
-layer_lrp = LayerLRP(custom_forward, target_layer)
+layer_lrp = LayerLRP(model, layer=target_layer)
 
 # Step 5: Compute Attributions
 attributions = layer_lrp.attribute(
     input_ids,
+    forward_func=custom_forward,
     additional_forward_args=(attention_mask,),
     attribute_to_layer_input=False
 )
