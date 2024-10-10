@@ -275,10 +275,13 @@ class LayerLRP(LRP, LayerAttribution):
     def _get_output_relevance(self, output):
         if isinstance(self.layer, list):
             relevances = []
+            print("self.layer here: ", self.layer)
             for layer in self.layer:
+                print("layer here: ", layer)
                 relevances.append(self._get_single_output_relevance(layer, output))
             return relevances
         else:
+            print("self.layer  @@@@@: ", self.layer)
             return self._get_single_output_relevance(self.layer, output)
 
     @staticmethod
