@@ -27,7 +27,7 @@ print(inputs_embeds)
 attention_mask = inputs['attention_mask']
 
 # Prepare decoder_input_ids
-target_text = "Was ist"
+target_text = "Was"
 decoder_inputs = tokenizer(target_text, return_tensors='pt')
 decoder_input_ids = decoder_inputs['input_ids']
 next_token_id = tokenizer.pad_token_id
@@ -76,7 +76,7 @@ print("logits_last_token: ", logits_last_token)
 top1_indices = torch.argmax(logits_last_token, dim=-1)  # Shape: (batch_size,)
 print("predicted indices: ", top1_indices)
 # get the predicted word
-predicted_word = tokenizer.decode(top1_indices)
+predicted_word = tokenizer.decode(top1_indices, skip_special_tokens=True)
 print("predicted word: ", predicted_word)
 
 layer_lrp = LayerLRP(model, layer=target_layer)
