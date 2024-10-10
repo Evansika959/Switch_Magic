@@ -1586,12 +1586,12 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
         ```"""
 
         #print the arguments received
-        # print("input_ids: ", input_ids)
-        # print("attention_mask: ", attention_mask)
-        # print("decoder_input_ids: ", decoder_input_ids)
-        # print("decoder_attention_mask: ", decoder_attention_mask)
-        # print("input_embeds: ", inputs_embeds)
-        # print("decoder_inputs_embeds: ", decoder_inputs_embeds)
+        print("input_ids: ", input_ids)
+        print("attention_mask: ", attention_mask)
+        print("decoder_input_ids: ", decoder_input_ids)
+        print("decoder_attention_mask: ", decoder_attention_mask)
+        print("input_embeds: ", inputs_embeds)
+        print("decoder_inputs_embeds: ", decoder_inputs_embeds)
 
         use_cache = use_cache if use_cache is not None else self.config.use_cache
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
