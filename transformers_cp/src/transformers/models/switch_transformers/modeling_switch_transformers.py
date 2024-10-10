@@ -1540,6 +1540,7 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
         decoder_input_ids: Optional[torch.LongTensor] = None,
         decoder_inputs_embeds: Optional[torch.FloatTensor] = None,
         decoder_attention_mask: Optional[torch.BoolTensor] = None,
+        run_LRP: Optional[bool] = False,
         head_mask: Optional[torch.FloatTensor] = None,
         decoder_head_mask: Optional[torch.FloatTensor] = None,
         cross_attn_head_mask: Optional[torch.Tensor] = None,
@@ -1585,12 +1586,12 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
         ```"""
 
         #print the arguments received
-        # print("input_ids: ", input_ids)
-        # print("attention_mask: ", attention_mask)
-        # print("decoder_input_ids: ", decoder_input_ids)
-        # print("decoder_attention_mask: ", decoder_attention_mask)
-        # print("input_embeds: ", inputs_embeds)
-        # print("decoder_inputs_embeds: ", decoder_inputs_embeds)
+        print("input_ids: ", input_ids)
+        print("attention_mask: ", attention_mask)
+        print("decoder_input_ids: ", decoder_input_ids)
+        print("decoder_attention_mask: ", decoder_attention_mask)
+        print("input_embeds: ", inputs_embeds)
+        print("decoder_inputs_embeds: ", decoder_inputs_embeds)
 
         use_cache = use_cache if use_cache is not None else self.config.use_cache
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
@@ -1698,6 +1699,12 @@ class SwitchTransformersForConditionalGeneration(SwitchTransformersPreTrainedMod
             output += (*decoder_outputs[1:], *encoder_outputs)
 
             return ((loss,) + output) if loss is not None else output
+        
+        if run_LRP:
+            # only return the predicted logits
+            output = lm_logits[:, -1, :]
+            print("in LRP output:", output)
+            return output
 
         return Seq2SeqMoEOutput(
             loss=loss,
