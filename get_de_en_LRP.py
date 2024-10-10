@@ -17,6 +17,8 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, o
 model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transformer.pth'))
 # model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 model.eval()
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
 
 # Print the model architecture
 def print_model(model):
