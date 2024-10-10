@@ -30,10 +30,7 @@ target_text = "Was ist"
 decoder_inputs = tokenizer(target_text, return_tensors='pt')
 decoder_input_ids = decoder_inputs['input_ids']
 next_token_id = tokenizer.pad_token_id
-decoder_input_ids = torch.cat(
-    [decoder_input_ids, torch.full((decoder_input_ids.shape[0], 1), next_token_id, dtype=torch.long)],
-    dim=1
-)
+decoder_input_ids[:, -1] = next_token_id
 decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids)
 print(decoder_input_ids)
 print(decoder_inputs_embeds)
@@ -70,6 +67,7 @@ logits = outputs.logits
 
 # get the predicted logits
 logits_last_token = logits[:, -1, :]  # Shape: (batch_size, vocab_size)
+print("logits_last_token: ", logits_last_token)
 
 # Get the top-1 predicted class index
 top1_indices = torch.argmax(logits_last_token, dim=-1)  # Shape: (batch_size,)
