@@ -50,6 +50,11 @@ def custom_forward(input_ids, attention_mask):
     # Sum over heads to get a scalar output for attribution
     return attentions_mean.sum(dim=1)
 
+rule = EpsilonRule()
+
+# Step 2: Add the 'relevance_output' attribute dynamically
+setattr(rule, 'relevance_output', None)  # Or assign a value if needed
+
 # Step 4: Set Up LayerLRP
 # We focus on the self-attention layer in the first decoder block
 def assign_lrp_rules(model):
@@ -61,7 +66,7 @@ def assign_lrp_rules(model):
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
         elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-            setattr(module, 'rule', Alpha1_Beta0_Rule())
+            setattr(module, 'rule', EpsilonRule())
             setattr(module, 'relevance_output', None)  
 
 assign_lrp_rules(model)
