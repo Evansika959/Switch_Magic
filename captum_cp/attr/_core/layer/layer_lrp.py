@@ -265,7 +265,6 @@ class LayerLRP(LRP, LayerAttribution):
 
         print("Normalized relevances: ", normalized_relevances)
         print("Output shape: ", output.shape)
-        print("Normalized relevances shape: ", normalized_relevances.shape)
 
         if isinstance(normalized_relevances, tuple):
             return tuple(

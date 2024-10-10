@@ -911,8 +911,8 @@ class SwitchTransformersStack(SwitchTransformersPreTrainedModel):
             self.block.append(
                 #crucial changes here
                 #change relative attention bias to always False
-                # SwitchTransformersBlock(config, has_relative_attention_bias=bool(i == 0), is_sparse=is_sparse)
-                SwitchTransformersBlock(config, has_relative_attention_bias=False, is_sparse=is_sparse)
+                SwitchTransformersBlock(config, has_relative_attention_bias=bool(i == 0), is_sparse=is_sparse)
+                # SwitchTransformersBlock(config, has_relative_attention_bias=False, is_sparse=is_sparse)
 
             )
         
