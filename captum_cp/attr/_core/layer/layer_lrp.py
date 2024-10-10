@@ -257,6 +257,7 @@ class LayerLRP(LRP, LayerAttribution):
             normalized_relevances = layer.rule.relevance_input
         else:
             normalized_relevances = layer.rule.relevance_output
+        print("self.device_ids: ", self.device_ids)
         key_list = _sort_key_list(list(normalized_relevances.keys()), self.device_ids)
         normalized_relevances = _reduce_list(
             [normalized_relevances[device_id] for device_id in key_list]
