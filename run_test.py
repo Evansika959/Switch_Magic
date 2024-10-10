@@ -46,7 +46,7 @@ for _ in range(max_generation_steps):
     decoder_input_ids = torch.cat([decoder_input_ids, next_token_id.unsqueeze(-1)], dim=-1)
 
     # Decode the generated token for visualization
-    generated_text = tokenizer.decode(next_token_id, skip_special_tokens=True)
+    generated_text = tokenizer.decode(next_token_id, skip_special_tokens=False)
     print("Generated Token:", generated_text)
 
 # Step 5: Final Generated Sequence
