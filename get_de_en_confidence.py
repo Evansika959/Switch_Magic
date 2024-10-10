@@ -100,6 +100,7 @@ for name, module in model.named_modules():
     if isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
         print("module name:", name)
         print("attention weights:", module.saved_attention_weights.shape)
+        print("attention weights:", module.saved_attention_weights)
 
         
 
