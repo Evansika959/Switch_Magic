@@ -32,7 +32,8 @@ decoder_inputs = tokenizer(target_text, return_tensors='pt')
 decoder_input_ids = decoder_inputs['input_ids']
 zero_token = torch.tensor([[0]], dtype=torch.long)  # Shape: (batch_size=1, seq_len=1)
 decoder_input_ids = torch.cat([zero_token, decoder_input_ids], dim=1)  # Concatenate along sequence dimension
-next_token_id = tokenizer.pad_token_id
+# Remove the last token
+decoder_input_ids = decoder_input_ids[:, :-1]
 # decoder_input_ids[:, -1] = next_token_id
 decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids)
 print(decoder_input_ids)
