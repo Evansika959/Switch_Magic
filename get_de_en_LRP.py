@@ -4,8 +4,8 @@ import torch
 from transformers import AutoTokenizer
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 import transformers_cp.src.transformers.models.switch_transformers
-from captum.attr import LayerLRP
-from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
+from captum_cp.attr._core.layer.layer_lrp import LayerLRP
+from captum_cp.attr._utils.lrp_rules import EpsilonRule, IdentityRule
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import numpy as np
@@ -60,8 +60,8 @@ def assign_lrp_rules(model):
         elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerNorm):
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
-        # elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-        #     setattr(module, 'rule', IdentityRule())
+        elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+            setattr(module, 'rule', EpsilonRule())
 
 assign_lrp_rules(model)
 
