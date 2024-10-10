@@ -62,6 +62,7 @@ def assign_lrp_rules(model):
             setattr(module, 'rule', IdentityRule())
         elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
             setattr(module, 'rule', Alpha1_Beta0_Rule())
+            setattr(module, 'relevance_output', None)  
 
 assign_lrp_rules(model)
 
