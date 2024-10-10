@@ -1,5 +1,6 @@
 import torch
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration, SwitchTransformersSparseMLP
+import transformers_cp
 from transformers import AutoTokenizer
 from datasets import load_dataset
 from torchsummary import summary
@@ -95,6 +96,12 @@ for name, module in model.named_modules():
         # print(module.router_history)
         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
+    if re.match(pattern, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+        print("name:", name)    
+
+        print("module:", module)
+
+        
 
 
 plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
