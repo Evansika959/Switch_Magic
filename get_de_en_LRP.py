@@ -16,7 +16,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
 model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transformer.pth'))
 # model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
-model.train()
+model.eval()
 
 # Step 2: Prepare the Input Text
 text = "What is this?"
