@@ -212,6 +212,7 @@ class LayerLRP(LRP, LayerAttribution):
         self._original_state_dict = self.model.state_dict()
         self.layers = []
         self._get_layers(self.model)
+        print(self.layers)
         self._check_and_attach_rules()
         self.attribute_to_layer_input = attribute_to_layer_input
         self.backward_handles = []
