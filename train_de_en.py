@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, DataCollatorWithPadding
 from datasets import load_dataset
 import os
 import matplotlib.pyplot as plt
