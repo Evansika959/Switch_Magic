@@ -36,22 +36,22 @@ def print_model(model):
 
 # Step 2: Prepare the Input Text
 text = "What is this?"
-inputs = tokenizer(text, return_tensors='pt')
-input_ids = inputs['input_ids']
-inputs_embeds = model.get_input_embeddings()(input_ids)
+inputs = tokenizer(text, return_tensors='pt').to(device)
+input_ids = inputs['input_ids'].to(device)
+inputs_embeds = model.get_input_embeddings()(input_ids).to(device)
 print(inputs_embeds)
-attention_mask = inputs['attention_mask']
+attention_mask = inputs['attention_mask'].to(device)
 
 # Prepare decoder_input_ids
 target_text = "Was ist"
-decoder_inputs = tokenizer(target_text, return_tensors='pt')
+decoder_inputs = tokenizer(target_text, return_tensors='pt').to(device)
 decoder_input_ids = decoder_inputs['input_ids']
 zero_token = torch.tensor([[0]], dtype=torch.long)  # Shape: (batch_size=1, seq_len=1)
 decoder_input_ids = torch.cat([zero_token, decoder_input_ids], dim=1)  # Concatenate along sequence dimension
 # Remove the last token
-decoder_input_ids = decoder_input_ids[:, :-1]
+decoder_input_ids = decoder_input_ids[:, :-1].to(device)
 # decoder_input_ids[:, -1] = next_token_id
-decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids)
+decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids).to(device)
 print(decoder_input_ids)
 print(decoder_inputs_embeds)
 decoder_attention_mask = None
