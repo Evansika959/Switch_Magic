@@ -58,8 +58,18 @@ assign_lrp_rules(model)
 
 target_layer = model.decoder.block[0].layer[0].SelfAttention
 
-temp_out = model(input_ids=input_ids, attention_mask=attention_mask, decoder_input_ids=decoder_input_ids, decoder_attention_mask=decoder_attention_mask)
-print(temp_out)
+outputs = model(input_ids=input_ids, attention_mask=attention_mask, decoder_input_ids=decoder_input_ids, decoder_attention_mask=decoder_attention_mask)
+logits = outputs.logits
+
+# get the predicted logits
+logits_last_token = logits[:, -1, :]  # Shape: (batch_size, vocab_size)
+
+# Get the top-1 predicted class index
+top1_indices = torch.argmax(logits_last_token, dim=-1)  # Shape: (batch_size,)
+print("predicted indices: ", top1_indices)
+# get the predicted word
+predicted_word = tokenizer.decode(top1_indices)
+print("predicted word: ", predicted_word)
 
 layer_lrp = LayerLRP(model, layer=target_layer)
 
@@ -67,6 +77,7 @@ layer_lrp = LayerLRP(model, layer=target_layer)
 attributions = layer_lrp.attribute(
     inputs = inputs_embeds,
     additional_forward_args=(None, attention_mask, None, decoder_inputs_embeds, decoder_attention_mask),
+    target=top1_indices,
     attribute_to_layer_input=False,
     verbose=True
 )
