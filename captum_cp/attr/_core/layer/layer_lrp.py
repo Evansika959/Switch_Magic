@@ -258,9 +258,10 @@ class LayerLRP(LRP, LayerAttribution):
         else:
             normalized_relevances = layer.rule.relevance_output
         key_list = _sort_key_list(list(normalized_relevances.keys()), self.device_ids)
-        normalized_relevances = _reduce_list(
-            [normalized_relevances[device_id] for device_id in key_list]
-        )
+        # no need to reduce list if there's only one device_id
+        # normalized_relevances = _reduce_list(
+        #     [normalized_relevances[device_id] for device_id in key_list]
+        # )
 
         if isinstance(normalized_relevances, tuple):
             return tuple(
