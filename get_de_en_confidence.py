@@ -25,7 +25,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 10
+test_num = 50
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -97,7 +97,7 @@ for name, module in model.named_modules():
         # print("\n")
 
 
-# plot_heat_map(encoder_router_history, filename="encoder_router_history", title="Router History of Encoder Blocks")
-# plot_heat_map(decoder_router_history, filename="decoder_router_history", title="Router History of Decoder Blocks")
+plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
+plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
 
 
