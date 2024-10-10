@@ -252,6 +252,7 @@ class LayerLRP(LRP, LayerAttribution):
             return relevances  # type: ignore
 
     def _get_single_output_relevance(self, layer, output):
+        print("At single rele: layer: ", layer)
         if self.attribute_to_layer_input:
             normalized_relevances = layer.rule.relevance_input
         else:
@@ -280,6 +281,7 @@ class LayerLRP(LRP, LayerAttribution):
                 relevances.append(self._get_single_output_relevance(layer, output))
             return relevances
         else:
+            print("At here")
             return self._get_single_output_relevance(self.layer, output)
 
     @staticmethod
