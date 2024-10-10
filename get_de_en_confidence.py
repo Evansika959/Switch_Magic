@@ -64,9 +64,6 @@ inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=T
 print("Original English Sentence:")
 print(input_text)
 
-print("Tokenized input:")
-print(inputs)
-
 # Generate translation
 model.eval()
 with torch.no_grad():
