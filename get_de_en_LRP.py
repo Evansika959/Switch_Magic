@@ -28,9 +28,15 @@ attention_mask = inputs['attention_mask']
 target_text = "Was ist"
 decoder_inputs = tokenizer(target_text, return_tensors='pt')
 decoder_input_ids = decoder_inputs['input_ids']
+next_token_id = tokenizer.pad_token_id
+decoder_input_ids = torch.cat(
+    [decoder_input_ids, torch.full((decoder_input_ids.shape[0], 1), next_token_id, dtype=torch.long)],
+    dim=1
+)
 decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids)
+print(decoder_input_ids)
 print(decoder_inputs_embeds)
-decoder_attention_mask = decoder_inputs['attention_mask']
+decoder_attention_mask = torch.ones_like(decoder_input_ids)
 
 # Step 3: Define a Custom Forward Function
 def custom_forward(input_ids, attention_mask):
