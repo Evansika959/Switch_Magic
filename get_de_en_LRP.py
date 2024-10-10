@@ -82,7 +82,7 @@ def assign_lrp_rules(model):
 
 assign_lrp_rules(model)
 
-setattr(model, 'device_ids', device)
+setattr(model, 'device_ids', [device])
 
 target_layer = model.decoder.block[0].layer[0].SelfAttention.o
 
