@@ -14,6 +14,7 @@ import numpy as np
 model_name = 'google/switch-base-8'  # Replace with 'google/switch_transformer-base-8' when available
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
+model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 model.train()
 
 # Step 2: Prepare the Input Text
