@@ -387,6 +387,8 @@ class SwitchTransformersAttention(nn.Module):
         self.pruned_heads = set()
         self.gradient_checkpointing = False
 
+        self.saved_attention_weights = None
+
         
     def prune_heads(self, heads):
         if len(heads) == 0:
@@ -594,6 +596,8 @@ class SwitchTransformersAttention(nn.Module):
 
         present_key_value_state = (key_states, value_states) if (self.is_decoder and use_cache) else None
         outputs = (attn_output,) + (present_key_value_state,) + (position_bias,)
+
+        self.saved_attention_weights = attn_weights
 
         if output_attentions:
             outputs = outputs + (attn_weights,)
