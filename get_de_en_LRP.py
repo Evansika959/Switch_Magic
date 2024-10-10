@@ -20,6 +20,9 @@ model.eval()
 
 # Print the model architecture
 def print_model(model):
+    if isinstance(model, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+        print("in attention")
+        print(model.children())
     for layer in model.children():
         if len(list(layer.children())) == 0:
             print(layer)
