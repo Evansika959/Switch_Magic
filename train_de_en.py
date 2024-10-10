@@ -68,7 +68,7 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', fa
 loss_fn = nn.CrossEntropyLoss(ignore_index=tokenizer.pad_token_id)
 
 # Directory for checkpoints
-checkpoint_dir = './checkpoints_switch'
+checkpoint_dir = './checkpoints_switch_forLRP'
 if not os.path.exists(checkpoint_dir):
     os.makedirs(checkpoint_dir)
 
@@ -170,4 +170,4 @@ plt.title('Training and Validation Loss over Epochs')
 plt.legend()
 plt.grid(True)
 plt.savefig('loss_curve.png')
-plt.show()
+
