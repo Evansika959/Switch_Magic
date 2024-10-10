@@ -20,7 +20,7 @@ attention_mask = inputs['attention_mask']
 
 # Step 3: Initialize the Decoder Input with <bos> token
 # Prepare the decoder start token (typically <bos>)
-decoder_start_token_id = tokenizer.bos_token_id
+decoder_start_token_id = tokenizer.pad_token_id
 decoder_input_ids = torch.tensor([[decoder_start_token_id]])  # Shape: (batch_size=1, seq_len=1)
 
 # Step 4: Perform Forward Pass to Generate the Next Token
