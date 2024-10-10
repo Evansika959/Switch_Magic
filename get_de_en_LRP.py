@@ -32,8 +32,6 @@ def print_model(model):
         else:
             print_model(layer)
 
-print_model(model)
-
 # Step 2: Prepare the Input Text
 text = "What is this?"
 inputs = tokenizer(text, return_tensors='pt')
@@ -82,7 +80,7 @@ def assign_lrp_rules(model):
 
 assign_lrp_rules(model)
 
-target_layer = model.decoder.block[0].layer[0].SelfAttention
+target_layer = model.decoder.block[0].layer[0].SelfAttention.o
 
 outputs = model(input_ids=input_ids, attention_mask=attention_mask, decoder_input_ids=decoder_input_ids, decoder_attention_mask=decoder_attention_mask)
 # print(outputs)
