@@ -60,8 +60,8 @@ def assign_lrp_rules(model):
         elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerNorm):
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
-        elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-            setattr(module, 'rule', IdentityRule())
+        # elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+        #     setattr(module, 'rule', IdentityRule())
 
 assign_lrp_rules(model)
 
