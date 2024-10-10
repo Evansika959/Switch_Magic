@@ -4,8 +4,8 @@ import torch
 from transformers import AutoTokenizer
 from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
 import transformers_cp.src.transformers.models.switch_transformers
-from captum_cp.attr._core.layer.layer_lrp import LayerLRP
-from captum_cp.attr._utils.lrp_rules import EpsilonRule, IdentityRule
+from captum.attr._core.layer.layer_lrp import LayerLRP
+from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import numpy as np
