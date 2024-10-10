@@ -1,72 +1,54 @@
-# layer_lrp_attention_heads.py
-
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, SwitchTransformersForConditionalGeneration
-from captum.attr import LayerLRP
-from captum.attr._utils.lrp_rules import EpsilonRule, IdentityRule
-import matplotlib.pyplot as plt
-import numpy as np
+from transformers import AutoTokenizer
+from transformers_cp.src.transformers.models.switch_transformers import SwitchTransformersForConditionalGeneration
+
 
 # Step 1: Load the Model and Tokenizer
-model_name = 'google/switch-base-8'  # Replace with 'google/switch_transformer-base-8' when available
+model_name = 'google/switch-base-8'
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
-model.eval()
+model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transformer.pth'))
 
-# Step 2: Prepare the Input Text
-text = "The quick brown fox jumps over the lazy dog."
+model.eval()  # Set model to evaluation mode
+
+# Step 2: Prepare the Encoder Input
+# Source text to encode
+text = "What is this?"
 inputs = tokenizer(text, return_tensors='pt')
 input_ids = inputs['input_ids']
 attention_mask = inputs['attention_mask']
 
-# Step 3: Define a Custom Forward Function
-def custom_forward(input_ids, attention_mask):
-    outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-    # Get decoder attentions from the first layer
-    attentions = outputs.decoder_attentions[0]  # Shape: (batch_size, num_heads, seq_len, seq_len)
-    # Aggregate attentions over the sequence dimension
-    attentions_mean = attentions.mean(dim=-1).mean(dim=-1)  # Shape: (batch_size, num_heads)
-    # Sum over heads to get a scalar output for attribution
-    return attentions_mean.sum(dim=1)
+# Step 3: Initialize the Decoder Input with <bos> token
+# Prepare the decoder start token (typically <bos>)
+decoder_start_token_id = tokenizer.bos_token_id
+decoder_input_ids = torch.tensor([[decoder_start_token_id]])  # Shape: (batch_size=1, seq_len=1)
 
-# tranverse the model recursively
-def print_all_leaf(model):
-    for layer in model.children():
-        if len(list(layer.children())) == 0:
-            print(layer)
-        else:
-            print_all_leaf(layer)
+# Step 4: Perform Forward Pass to Generate the Next Token
+# Loop to generate tokens one at a time
+max_generation_steps = 5  # Limit the number of tokens to generate for demonstration
+for _ in range(max_generation_steps):
+    # Forward pass with encoder and decoder inputs
+    with torch.no_grad():  # Disable gradient calculations for inference
+        outputs = model(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            decoder_input_ids=decoder_input_ids,
+        )
 
-print_all_leaf(model)
+    # Get logits for the last token in the sequence
+    logits = outputs.logits  # Shape: (batch_size, seq_len, vocab_size)
+    logits_last_token = logits[:, -1, :]  # Shape: (batch_size, vocab_size)
 
-# Step 4: Set Up LayerLRP
-target_layer = model.decoder.block[0].layer[0].SelfAttention
-layer_lrp = LayerLRP(model, layer=target_layer)
+    # Get the most likely next token using argmax
+    next_token_id = torch.argmax(logits_last_token, dim=-1)  # Shape: (batch_size,)
 
-# layer_lrp.rule_map[torch.nn.Embedding] = EpsilonRule()
-print(layer_lrp)
+    # Append the predicted token to the decoder input ids
+    decoder_input_ids = torch.cat([decoder_input_ids, next_token_id.unsqueeze(-1)], dim=-1)
 
-# Step 5: Compute Attributions
-attributions = layer_lrp.attribute(
-    input_ids,
-    # forward_func=custom_forward,
-    additional_forward_args=(attention_mask,),
-    attribute_to_layer_input=False
-)
+    # Decode the generated token for visualization
+    generated_text = tokenizer.decode(next_token_id, skip_special_tokens=True)
+    print("Generated Token:", generated_text)
 
-# Step 6: Extract and Analyze Attention Head Importance
-# Convert attributions to numpy array
-attr_np = attributions.detach().numpy()[0]  # Assuming batch_size=1
-
-# Normalize the attributions
-attr_np_normalized = (attr_np - attr_np.min()) / (attr_np.max() - attr_np.min())
-
-# Step 7: Visualize the Attributions
-num_heads = attr_np.shape[0]
-plt.figure(figsize=(10, 6))
-plt.bar(range(num_heads), attr_np_normalized)
-plt.xlabel('Attention Head')
-plt.ylabel('Normalized Attribution Score')
-plt.title('Attention Head Importance')
-plt.xticks(range(num_heads))
-
+# Step 5: Final Generated Sequence
+full_generated_text = tokenizer.decode(decoder_input_ids[0], skip_special_tokens=True)
+print("Full Generated Sequence:", full_generated_text)
