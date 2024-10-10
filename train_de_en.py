@@ -92,10 +92,10 @@ for epoch in range(epochs):
     loop = tqdm(train_dataloader, leave=True, desc=f"Epoch {epoch+1}/{epochs}")
     for batch in loop:
         input_ids = batch['input_ids'].to(device)
-        print("input sequence:", tokenizer.decode(input_ids[0], skip_special_tokens=True))
+        # print("input sequence:", tokenizer.decode(input_ids[0], skip_special_tokens=True))
         attention_mask = batch['attention_mask'].to(device)
         labels = batch['labels'].to(device)
-        print("target sequence:", tokenizer.decode(labels[0], skip_special_tokens=True))
+        # print("target sequence:", tokenizer.decode(labels[0], skip_special_tokens=True))
 
         optimizer.zero_grad()
 
