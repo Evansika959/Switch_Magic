@@ -25,7 +25,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 1
+test_num = 10
 
 for i in range(test_num):
     # randomly select 1 test case
