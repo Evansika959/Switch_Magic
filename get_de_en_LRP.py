@@ -65,9 +65,9 @@ assign_lrp_rules(model)
 target_layer = model.decoder.block[0].layer[0].SelfAttention
 
 outputs = model(input_ids=input_ids, attention_mask=attention_mask, decoder_input_ids=decoder_input_ids, decoder_attention_mask=decoder_attention_mask)
-print(outputs)
+# print(outputs)
 logits = outputs.logits
-
+print("logits: ", logits.shape)
 # get the predicted logits
 logits_last_token = logits[:, -1, :]  # Shape: (batch_size, vocab_size)
 print("logits_last_token: ", logits_last_token)
