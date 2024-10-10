@@ -31,7 +31,7 @@ target_text = "Was ist"
 decoder_inputs = tokenizer(target_text, return_tensors='pt')
 decoder_input_ids = decoder_inputs['input_ids']
 next_token_id = tokenizer.pad_token_id
-decoder_input_ids[:, -1] = next_token_id
+# decoder_input_ids[:, -1] = next_token_id
 decoder_inputs_embeds = model.get_input_embeddings()(decoder_input_ids)
 print(decoder_input_ids)
 print(decoder_inputs_embeds)
