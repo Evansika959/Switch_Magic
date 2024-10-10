@@ -14,6 +14,7 @@ import numpy as np
 model_name = 'google/switch-base-8'  # Replace with 'google/switch_transformer-base-8' when available
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = SwitchTransformersForConditionalGeneration.from_pretrained(model_name, output_attentions=True)
+model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transformer.pth'))
 # model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 model.train()
 
@@ -57,7 +58,7 @@ def assign_lrp_rules(model):
             # Assign IdentityRule to LayerNorm layer
             setattr(module, 'rule', IdentityRule())
         elif isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-            setattr(module, 'rule', EpsilonRule())
+            setattr(module, 'rule', IdentityRule())
 
 assign_lrp_rules(model)
 
