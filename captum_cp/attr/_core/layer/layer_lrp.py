@@ -212,7 +212,6 @@ class LayerLRP(LRP, LayerAttribution):
         self._original_state_dict = self.model.state_dict()
         self.layers = []
         self._get_layers(self.model)
-        print(self.layers)
         self._check_and_attach_rules()
         self.attribute_to_layer_input = attribute_to_layer_input
         self.backward_handles = []
@@ -277,6 +276,7 @@ class LayerLRP(LRP, LayerAttribution):
         if isinstance(self.layer, list):
             relevances = []
             for layer in self.layer:
+                print("At layer: ", layer)
                 relevances.append(self._get_single_output_relevance(layer, output))
             return relevances
         else:
