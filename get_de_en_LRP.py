@@ -18,6 +18,16 @@ model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transf
 # model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 model.eval()
 
+# Print the model architecture
+def print_model(model):
+    for layer in model.children():
+        if len(list(layer.children())) == 0:
+            print(layer)
+        else:
+            print_model(layer)
+
+print_model(model)
+
 # Step 2: Prepare the Input Text
 text = "What is this?"
 inputs = tokenizer(text, return_tensors='pt')
@@ -49,11 +59,6 @@ def custom_forward(input_ids, attention_mask):
     attentions_mean = attentions.mean(dim=-1).mean(dim=-1)  # Shape: (batch_size, num_heads)
     # Sum over heads to get a scalar output for attribution
     return attentions_mean.sum(dim=1)
-
-rule = EpsilonRule()
-
-# Step 2: Add the 'relevance_output' attribute dynamically
-setattr(rule, 'relevance_output', None)  # Or assign a value if needed
 
 # Step 4: Set Up LayerLRP
 # We focus on the self-attention layer in the first decoder block
