@@ -142,6 +142,13 @@ for name, module in model.named_modules():
             print("module name:", name)
             print("attention weights:", module.saved_attention_weights.shape)
             print("attention weights:", module.saved_attention_weights)
+            match = re.search(r'layer\.(\d+)', name)
+
+            if match:
+                layer_num = int(match.group(1))  # Extract the number and convert it to an integer
+                print("Layer number:", layer_num)
+            else:
+                print("Layer number not found")
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             print("confidence:", confidence)
         
