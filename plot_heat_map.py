@@ -81,6 +81,6 @@ def plot_confidence_map(data, filename="confidence_map", title="Heatmap of Confi
     plt.xticks(ticks=range(len(data[0])), labels=[f'Head {i}' for i in range(len(data[0]))])  # Set x-axis ticks
     plt.yticks(ticks=range(len(data)), labels=[f'Layer {i}' for i in range(len(data))])  # Set y-axis ticks
     plt.tight_layout()
-    plt.savefig(f"{filename}.png")  # Save the heatmap as a PNG file
+    plt.savefig(f"plots/{filename}.png")  # Save the heatmap as a PNG file
 
 
