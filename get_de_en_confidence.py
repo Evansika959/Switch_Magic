@@ -64,7 +64,11 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 50
+test_num = 1
+
+conf_matrix = torch.zeros(12, 12)
+
+pattern_attn = r'^encoder\..*\.SelfAttention$'
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -94,7 +98,21 @@ for i in range(test_num):
         outputs = model(input_ids=input_ids, attention_mask=attention_mask, labels=label_ids, decoder_attention_mask=decoder_mask)
         loss = outputs.loss
 
-    print("Loss:", loss.item())
+    # print("Loss:", loss.item())
+
+    for name, module in model.named_modules():
+        if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+            match = re.search(r'block\.(\d+)', name)
+
+            if match:
+                layer_num = int(match.group(1))
+            else:
+                print("Layer number not found")
+            
+            confidence = calculate_confidence_encoder(module.saved_attention_weights)
+            conf_matrix[layer_num] += torch.tensor(confidence)
+            print("conf_mat: ", conf_matrix)
+
 
 # Tokenize the input
 input_text = "What is this?"
@@ -120,8 +138,6 @@ print(generated_text)
 pattern = r'^encoder\..*\.mlp$'
 pattern2 = r'^decoder\..*\.mlp$'
 
-pattern_attn = r'^encoder\..*\.SelfAttention$'
-
 encoder_router_history = {}
 decoder_router_history = {}
 
@@ -142,7 +158,7 @@ for name, module in model.named_modules():
             print("module name:", name)
             print("attention weights:", module.saved_attention_weights.shape)
             print("attention weights:", module.saved_attention_weights)
-            match = re.search(r'layer\.(\d+)', name)
+            match = re.search(r'block\.(\d+)', name)
 
             if match:
                 layer_num = int(match.group(1))  # Extract the number and convert it to an integer
