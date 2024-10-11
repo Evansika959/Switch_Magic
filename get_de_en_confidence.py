@@ -30,7 +30,7 @@ def calculate_confidence(attention_weights):
         for batch in range(batch_size):
             # Iterate over each token in the sequence (query tokens)
             for token in range(seq_len):
-                if token != seq_len - 1:  # Exclude the EOS token
+                if token != seq_len:  # Exclude the EOS token
                     # Extract the attention weights for the current head and token
                     head_weights = attention_weights[batch, head, token]
 
