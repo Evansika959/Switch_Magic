@@ -78,6 +78,11 @@ def plot_confidence_map(data, filename="confidence_map", title="Heatmap of Confi
     plt.title(title)
     plt.xlabel("Attention Heads")
     plt.ylabel("Layers")
+    # Annotate the heatmap with the confidence values
+    for i in range(len(data)):
+        for j in range(len(data[0])):
+            plt.text(j, i, f'{data[i][j]:.2f}', ha='center', va='center', color='black')
+            
     plt.xticks(ticks=range(len(data[0])), labels=[f'Head {i}' for i in range(len(data[0]))])  # Set x-axis ticks
     plt.yticks(ticks=range(len(data)), labels=[f'Layer {i}' for i in range(len(data))])  # Set y-axis ticks
     plt.tight_layout()
