@@ -33,10 +33,13 @@ def calculate_confidence(attention_weights):
                 if token != seq_len:  # Exclude the EOS token
                     # Extract the attention weights for the current head and token
                     head_weights = attention_weights[batch, head, token]
+                    print("head_weights:", head_weights)
 
                     # Find the maximum attention weight for this token over all key positions
                     max_weight = torch.max(head_weights)
                     max_weights.append(max_weight.item())
+
+            print("\n")
 
         # Compute the average of max weights for the current head
         print("for head ", head, " ", max_weights)
@@ -138,13 +141,13 @@ for name, module in model.named_modules():
         # print("\n")
     # if re.match(pattern, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
     if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
-        print("module name:", name)
-        print("attention weights:", module.saved_attention_weights.shape)
-        print("attention weights:", module.saved_attention_weights)
-        print(module.key_value_proj_dim)
-        confidence = calculate_confidence(module.saved_attention_weights)
-        print("confidence:", confidence)
-
+        if name == "encoder.block.11.layer.0.SelfAttention":
+            print("module name:", name)
+            print("attention weights:", module.saved_attention_weights.shape)
+            print("attention weights:", module.saved_attention_weights)
+            confidence = calculate_confidence(module.saved_attention_weights)
+            print("confidence:", confidence)
+        
 
 # plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
 # plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
