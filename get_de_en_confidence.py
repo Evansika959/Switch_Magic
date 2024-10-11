@@ -118,6 +118,14 @@ for i in range(test_num):
             conf_matrix[layer_num] += torch.tensor(confidence)
 
         if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+            match = re.search(r'block\.(\d+)', name)
+
+            if match:
+                layer_num = int(match.group(1))
+            else:
+                print("Layer number not found")
+
+        if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerCrossAttention):
             print(name,module)
             print(module.saved_attention_weights.shape)
 
