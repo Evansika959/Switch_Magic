@@ -69,6 +69,8 @@ conf_matrix = torch.zeros(12, 12)
 
 decoder_conf_matrix = torch.zeros(12, 12)
 
+cross_conf_matrix = torch.zeros(12, 12)
+
 conf_mat_50 = torch.zeros(12, 12)
 conf_mat_100 = torch.zeros(12, 12)
 conf_mat_200 = torch.zeros(12, 12)
@@ -127,9 +129,19 @@ for i in range(test_num):
             else:
                 print("Layer number not found")
 
-        if re.match(pattern_attn_cross, name):
-            print(name,module)
-            print(module.saved_attention_weights.shape)
+            confidence = calculate_confidence_encoder(module.saved_attention_weights)
+            decoder_conf_matrix[layer_num] += torch.tensor(confidence)
+
+        if re.match(pattern_attn_cross, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+            match = re.search(r'block\.(\d+)', name)
+
+            if match:
+                layer_num = int(match.group(1))
+            else:
+                print("Layer number not found")
+
+            confidence = calculate_confidence_encoder(module.saved_attention_weights)
+            cross_conf_matrix[layer_num] += torch.tensor(confidence)
 
     if i == 49:
         conf_mat_50 += conf_matrix/50
@@ -142,7 +154,9 @@ for i in range(test_num):
 
     print("Test Case:", i, "Loss:", loss.item())
 
-
+decoder_conf_matrix /= test_num
+cross_conf_matrix /= test_num
+conf_matrix /= test_num
 # print("conf_mat_50: ", conf_mat_50)
 # print("conf_mat_100: ", conf_mat_100)
 # print("conf_mat_200: ", conf_mat_200)
@@ -196,5 +210,9 @@ for name, module in model.named_modules():
 # plot_confidence_map(conf_mat_100, filename="conf_mat_100", title="Confidence Matrix of Encoder Blocks (100 samples)")
 # plot_confidence_map(conf_mat_200, filename="conf_mat_200", title="Confidence Matrix of Encoder Blocks (200 samples)")
 # plot_confidence_map(conf_mat_500, filename="conf_mat_500", title="Confidence Matrix of Encoder Blocks (500 samples)")
+
+plot_confidence_map(conf_matrix, filename="conf_mat", title="Confidence Matrix of Encoder Self-Attention")
+plot_confidence_map(decoder_conf_matrix, filename="decoder_conf_mat", title="Confidence Matrix of Decoder Self-Attention")
+plot_confidence_map(cross_conf_matrix, filename="cross_conf_mat", title="Confidence Matrix of Decoder Cross-Attention")
 
 
