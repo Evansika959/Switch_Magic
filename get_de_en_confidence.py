@@ -126,9 +126,9 @@ for i in range(test_num):
     print("Test Case:", i, "Loss:", loss.item())
 
 
-print("conf_mat_50: ", conf_mat_50)
-print("conf_mat_100: ", conf_mat_100)
-print("conf_mat_200: ", conf_mat_200)
+# print("conf_mat_50: ", conf_mat_50)
+# print("conf_mat_100: ", conf_mat_100)
+# print("conf_mat_200: ", conf_mat_200)
 print("conf_mat_500: ", conf_mat_500)
 
 # Tokenize the input
