@@ -7,7 +7,7 @@ from torchsummary import summary
 import re
 from plot_heat_map import plot_heat_map
 
-def calculate_confidence(attention_weights):
+def calculate_confidence_encoder(attention_weights):
     """
     Calculate the confidence of each attention head.
     Confidence is defined as the average of the maximum attention weights, excluding the EOS token.
@@ -32,14 +32,11 @@ def calculate_confidence(attention_weights):
             for token in range(seq_len):
                 if token != seq_len:  # Exclude the EOS token
                     # Extract the attention weights for the current head and token
-                    head_weights = attention_weights[batch, head, token]
-                    print("head_weights:", head_weights)
+                    head_weights = attention_weights[batch, head, token][:-1]
 
                     # Find the maximum attention weight for this token over all key positions
                     max_weight = torch.max(head_weights)
                     max_weights.append(max_weight.item())
-
-            print("\n")
 
         # Compute the average of max weights for the current head
         print("for head ", head, " ", max_weights)
