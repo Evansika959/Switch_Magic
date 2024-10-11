@@ -7,6 +7,44 @@ from torchsummary import summary
 import re
 from plot_heat_map import plot_heat_map
 
+def calculate_confidence(attention_weights):
+    """
+    Calculate the confidence of each attention head.
+    Confidence is defined as the average of the maximum attention weights, excluding the EOS token.
+
+    Args:
+        attention_weights (torch.Tensor): The attention weights from the model, shape [batch_size, n_heads, seq_length, key_length].
+        eos_token_idx (int): Index of the end-of-sequence (EOS) token.
+
+    Returns:
+        list: A list of confidence values for each attention head.
+    """
+    batch_size, num_heads, seq_len, _ = attention_weights.shape
+    confidences = []
+
+    # Iterate over each head
+    for head in range(num_heads):
+        max_weights = []  # Store max attention weights for each token
+
+        # Iterate over each sequence in the batch
+        for batch in range(batch_size):
+            # Iterate over each token in the sequence (query tokens)
+            for token in range(seq_len):
+                if token != seq_len - 1:  # Exclude the EOS token
+                    # Extract the attention weights for the current head and token
+                    head_weights = attention_weights[batch, head, token]
+
+                    # Find the maximum attention weight for this token over all key positions
+                    max_weight = torch.max(head_weights)
+                    max_weights.append(max_weight.item())
+
+        # Compute the average of max weights for the current head
+        print("for head ", head, " ", max_weights)
+        confidence = sum(max_weights) / len(max_weights) if len(max_weights) > 0 else 0
+        confidences.append(confidence)
+
+    return confidences
+
 
 # Load the tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("google/switch-base-8")
@@ -64,6 +102,7 @@ inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=T
 
 print("Original English Sentence:")
 print(input_text)
+print(inputs)
 
 # Generate translation
 model.eval()
@@ -81,6 +120,7 @@ print(generated_text)
 pattern = r'^encoder\..*\.mlp$'
 pattern2 = r'^decoder\..*\.mlp$'
 
+pattern_attn = r'^encoder\..*\.SelfAttention$'
 
 encoder_router_history = {}
 decoder_router_history = {}
@@ -97,13 +137,13 @@ for name, module in model.named_modules():
         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
     # if re.match(pattern, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-    if isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention) and name == "encoder.block.11.layer.0.SelfAttention":  
+    if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
         print("module name:", name)
         print("attention weights:", module.saved_attention_weights.shape)
         print("attention weights:", module.saved_attention_weights)
-        print(model.key_value_proj_dim)
-
-        
+        print(module.key_value_proj_dim)
+        confidence = calculate_confidence(module.saved_attention_weights)
+        print("confidence:", confidence)
 
 
 # plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
