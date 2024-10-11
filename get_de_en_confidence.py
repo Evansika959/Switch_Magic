@@ -39,7 +39,6 @@ def calculate_confidence_encoder(attention_weights):
                     max_weights.append(max_weight.item())
 
         # Compute the average of max weights for the current head
-        print("for head ", head, " ", max_weights)
         confidence = sum(max_weights) / len(max_weights) if len(max_weights) > 0 else 0
         confidences.append(confidence)
 
