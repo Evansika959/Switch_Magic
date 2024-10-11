@@ -57,8 +57,6 @@ model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.p
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-print(model)
-
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
 
@@ -129,7 +127,7 @@ for i in range(test_num):
             else:
                 print("Layer number not found")
 
-        if re.match(pattern_attn_cross, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerCrossAttention):
+        if re.match(pattern_attn_cross, name):
             print(name,module)
             print(module.saved_attention_weights.shape)
 
