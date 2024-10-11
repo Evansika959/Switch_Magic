@@ -153,20 +153,20 @@ for name, module in model.named_modules():
         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
     # if re.match(pattern, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-    if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
-        if name == "encoder.block.11.layer.0.SelfAttention":
-            print("module name:", name)
-            print("attention weights:", module.saved_attention_weights.shape)
-            print("attention weights:", module.saved_attention_weights)
-            match = re.search(r'block\.(\d+)', name)
+    # if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
+    #     if name == "encoder.block.11.layer.0.SelfAttention":
+    #         print("module name:", name)
+    #         print("attention weights:", module.saved_attention_weights.shape)
+    #         print("attention weights:", module.saved_attention_weights)
+    #         match = re.search(r'block\.(\d+)', name)
 
-            if match:
-                layer_num = int(match.group(1))  # Extract the number and convert it to an integer
-                print("Layer number:", layer_num)
-            else:
-                print("Layer number not found")
-            confidence = calculate_confidence_encoder(module.saved_attention_weights)
-            print("confidence:", confidence)
+    #         if match:
+    #             layer_num = int(match.group(1))  # Extract the number and convert it to an integer
+    #             print("Layer number:", layer_num)
+    #         else:
+    #             print("Layer number not found")
+    #         confidence = calculate_confidence_encoder(module.saved_attention_weights)
+    #         print("confidence:", confidence)
         
 
 # plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
