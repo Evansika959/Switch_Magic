@@ -63,9 +63,14 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 50
+test_num = 500
 
 conf_matrix = torch.zeros(12, 12)
+
+conf_mat_50 = torch.zeros(12, 12)
+conf_mat_100 = torch.zeros(12, 12)
+conf_mat_200 = torch.zeros(12, 12)
+conf_mat_500 = torch.zeros(12, 12) 
 
 pattern_attn = r'^encoder\..*\.SelfAttention$'
 
@@ -111,8 +116,20 @@ for i in range(test_num):
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
 
-conf_matrix /= test_num
-print("conf_mat: ", conf_matrix)
+    if i == 50:
+        conf_mat_50 += conf_matrix/i
+    elif i == 100:
+        conf_mat_100 += conf_matrix/i
+    elif i == 200:
+        conf_mat_200 += conf_matrix/i
+    elif i == 500:
+        conf_mat_500 += conf_matrix/i
+
+
+print("conf_mat_50: ", conf_mat_50)
+print("conf_mat_100: ", conf_mat_100)
+print("conf_mat_200: ", conf_mat_200)
+print("conf_mat_500: ", conf_mat_500)
 
 # Tokenize the input
 input_text = "What is this?"
