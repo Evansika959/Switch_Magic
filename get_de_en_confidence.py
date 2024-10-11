@@ -63,9 +63,11 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 500
+test_num = 200
 
 conf_matrix = torch.zeros(12, 12)
+
+decoder_conf_matrix = torch.zeros(12, 12)
 
 conf_mat_50 = torch.zeros(12, 12)
 conf_mat_100 = torch.zeros(12, 12)
@@ -73,6 +75,7 @@ conf_mat_200 = torch.zeros(12, 12)
 conf_mat_500 = torch.zeros(12, 12) 
 
 pattern_attn = r'^encoder\..*\.SelfAttention$'
+pattern_attn_de = r'^decoder\..*\.SelfAttention$'
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -113,6 +116,10 @@ for i in range(test_num):
             
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
+
+        if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
+            print(name,module)
+            print(module.saved_attention_weights.shape)
 
     if i == 49:
         conf_mat_50 += conf_matrix/50
@@ -171,13 +178,13 @@ for name, module in model.named_modules():
         # print("\n")
         
 
-plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
-plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
+# plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
+# plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
 
 
-plot_confidence_map(conf_mat_50, filename="conf_mat_50", title="Confidence Matrix of Encoder Blocks (50 samples)")
-plot_confidence_map(conf_mat_100, filename="conf_mat_100", title="Confidence Matrix of Encoder Blocks (100 samples)")
-plot_confidence_map(conf_mat_200, filename="conf_mat_200", title="Confidence Matrix of Encoder Blocks (200 samples)")
-plot_confidence_map(conf_mat_500, filename="conf_mat_500", title="Confidence Matrix of Encoder Blocks (500 samples)")
+# plot_confidence_map(conf_mat_50, filename="conf_mat_50", title="Confidence Matrix of Encoder Blocks (50 samples)")
+# plot_confidence_map(conf_mat_100, filename="conf_mat_100", title="Confidence Matrix of Encoder Blocks (100 samples)")
+# plot_confidence_map(conf_mat_200, filename="conf_mat_200", title="Confidence Matrix of Encoder Blocks (200 samples)")
+# plot_confidence_map(conf_mat_500, filename="conf_mat_500", title="Confidence Matrix of Encoder Blocks (500 samples)")
 
 
