@@ -102,8 +102,6 @@ for i in range(test_num):
         outputs = model(input_ids=input_ids, attention_mask=attention_mask, labels=label_ids, decoder_attention_mask=decoder_mask)
         loss = outputs.loss
 
-    # print("Loss:", loss.item())
-
     for name, module in model.named_modules():
         if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
             match = re.search(r'block\.(\d+)', name)
@@ -124,6 +122,8 @@ for i in range(test_num):
         conf_mat_200 += conf_matrix/i
     elif i == 500:
         conf_mat_500 += conf_matrix/i
+
+    print("Test Case:", i, "Loss:", loss.item())
 
 
 print("conf_mat_50: ", conf_mat_50)
