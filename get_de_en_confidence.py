@@ -63,7 +63,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 1
+test_num = 50
 
 conf_matrix = torch.zeros(12, 12)
 
@@ -110,8 +110,9 @@ for i in range(test_num):
             
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
-            print("conf_mat: ", conf_matrix)
 
+conf_matrix /= test_num
+print("conf_mat: ", conf_matrix)
 
 # Tokenize the input
 input_text = "What is this?"
@@ -151,24 +152,9 @@ for name, module in model.named_modules():
         # print(module.router_history)
         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
-    # if re.match(pattern, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-    # if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
-    #     if name == "encoder.block.11.layer.0.SelfAttention":
-    #         print("module name:", name)
-    #         print("attention weights:", module.saved_attention_weights.shape)
-    #         print("attention weights:", module.saved_attention_weights)
-    #         match = re.search(r'block\.(\d+)', name)
-
-    #         if match:
-    #             layer_num = int(match.group(1))  # Extract the number and convert it to an integer
-    #             print("Layer number:", layer_num)
-    #         else:
-    #             print("Layer number not found")
-    #         confidence = calculate_confidence_encoder(module.saved_attention_weights)
-    #         print("confidence:", confidence)
         
 
-# plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
-# plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
+plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
+plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
 
 
