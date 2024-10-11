@@ -76,6 +76,8 @@ conf_mat_500 = torch.zeros(12, 12)
 
 pattern_attn = r'^encoder\..*\.SelfAttention$'
 pattern_attn_de = r'^decoder\..*\.SelfAttention$'
+pattern_attn_cross = r'^decoder\..*\.EncDecAttention$'
+
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -125,7 +127,7 @@ for i in range(test_num):
             else:
                 print("Layer number not found")
 
-        if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerCrossAttention):
+        if re.match(pattern_attn_cross, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersLayerCrossAttention):
             print(name,module)
             print(module.saved_attention_weights.shape)
 
