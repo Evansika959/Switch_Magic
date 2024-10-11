@@ -5,7 +5,7 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 from torchsummary import summary
 import re
-from plot_heat_map import plot_heat_map
+from plot_heat_map import plot_heat_map, plot_confidence_map
 
 def calculate_confidence_encoder(attention_weights):
     """
@@ -114,14 +114,14 @@ for i in range(test_num):
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
 
-    if i == 50:
-        conf_mat_50 += conf_matrix/i
-    elif i == 100:
-        conf_mat_100 += conf_matrix/i
-    elif i == 200:
-        conf_mat_200 += conf_matrix/i
-    elif i == 500:
-        conf_mat_500 += conf_matrix/i
+    if i == 49:
+        conf_mat_50 += conf_matrix/50
+    elif i == 99:
+        conf_mat_100 += conf_matrix/100
+    elif i == 199:
+        conf_mat_200 += conf_matrix/200
+    elif i == 499:
+        conf_mat_500 += conf_matrix/500
 
     print("Test Case:", i, "Loss:", loss.item())
 
@@ -173,5 +173,11 @@ for name, module in model.named_modules():
 
 plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
 plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
+
+
+plot_confidence_map(conf_mat_50, filename="conf_mat_50", title="Confidence Matrix of Encoder Blocks (50 samples)")
+plot_confidence_map(conf_mat_100, filename="conf_mat_100", title="Confidence Matrix of Encoder Blocks (100 samples)")
+plot_confidence_map(conf_mat_200, filename="conf_mat_200", title="Confidence Matrix of Encoder Blocks (200 samples)")
+plot_confidence_map(conf_mat_500, filename="conf_mat_500", title="Confidence Matrix of Encoder Blocks (500 samples)")
 
 
