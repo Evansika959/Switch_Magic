@@ -97,10 +97,11 @@ for name, module in model.named_modules():
         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
     # if re.match(pattern, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
-    if isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):  
+    if isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention) and name == "encoder.block.11.layer.0.SelfAttention":  
         print("module name:", name)
         print("attention weights:", module.saved_attention_weights.shape)
         print("attention weights:", module.saved_attention_weights)
+        print(model.key_value_proj_dim)
 
         
 
