@@ -140,7 +140,7 @@ for i in range(test_num):
                 # print("confidences: ", confidence)
                 for expert in range(8):
                     conf_matrix[expert][layer_num] += confidence[expert]
-                    print("confidence: ", conf_matrix[expert][layer_num])
+                    # print("confidence: ", conf_matrix[expert][layer_num])
                     if confidence[expert].sum() != 0:
                         expert_cnt[expert] += 1
                     else:
@@ -178,6 +178,7 @@ print("conf_mat: ", conf_matrix)
 for expert in range(8):
     conf_matrix[expert] /= expert_cnt[expert]
     print("conf_mat at exp: ", expert, " ", conf_matrix[expert])
+    plot_confidence_map(conf_matrix[expert], filename=f"conf_mat_exp_{expert}", title=f"Confidence Matrix of Encoder Self-Attention at Expert {expert}")
 
 
 # for name, module in model.named_modules():
