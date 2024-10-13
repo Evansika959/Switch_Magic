@@ -78,6 +78,8 @@ pattern_attn_cross = r'^decoder\..*\.EncDecAttention$'
 pattern_en_mlp = r'^encoder\..*\.mlp$'
 pattern_de_mlp = r'^decoder\..*\.mlp$'
 
+encoder_router_history = {}
+decoder_router_history = {}
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -119,6 +121,10 @@ for i in range(test_num):
             else:
                 print("Layer number not found")
             print("attention_weights: ", module.saved_attention_weights.shape)
+
+            mlp_module = model.encoder.block[layer_num].layers[0].mlp
+            print("mlp_module: ", mlp_module)
+
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
 
@@ -149,10 +155,6 @@ for i in range(test_num):
 decoder_conf_matrix /= test_num
 cross_conf_matrix /= test_num
 conf_matrix /= test_num
-# print("conf_mat_50: ", conf_mat_50)
-# print("conf_mat_100: ", conf_mat_100)
-# print("conf_mat_200: ", conf_mat_200)
-print("conf_mat_500: ", conf_mat_500)
 
 # Tokenize the input
 input_text = "What is this?"
@@ -177,8 +179,6 @@ print(generated_text)
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 
 
-encoder_router_history = {}
-decoder_router_history = {}
 
 # for name, module in model.named_modules():
 #     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
