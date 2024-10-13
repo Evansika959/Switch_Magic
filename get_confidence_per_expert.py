@@ -123,12 +123,14 @@ for i in range(test_num):
                 print("Layer number not found")
             print("attention_weights: ", module.saved_attention_weights.shape)
 
+            # record attention confidence based on the router history 
             if layer_num % 2 == 1:
                 mlp_module = model.encoder.block[layer_num].layer[1].mlp
                 print("mlp_module: ", mlp_module.router_history[-1])
 
-            confidence = calculate_confidence_encoder(module.saved_attention_weights)
-            conf_matrix[layer_num] += torch.tensor(confidence)
+                confidence = calculate_confidence_encoder(module.saved_attention_weights)
+                print("confidence: ", confidence)
+                conf_matrix[0][layer_num] += torch.tensor(confidence)
 
         # if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
         #     match = re.search(r'block\.(\d+)', name)
