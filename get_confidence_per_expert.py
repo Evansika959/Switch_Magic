@@ -79,6 +79,8 @@ decoder_conf_matrix = torch.zeros(8, 12, 12)
 
 cross_conf_matrix = torch.zeros(8, 12, 12)
 
+expert_cnt = torch.zeros(8)
+
 pattern_attn = r'^encoder\..*\.SelfAttention$'
 pattern_attn_de = r'^decoder\..*\.SelfAttention$'
 pattern_attn_cross = r'^decoder\..*\.EncDecAttention$'
@@ -134,8 +136,13 @@ for i in range(test_num):
                 print("mlp_module: ", router_desicion)
 
                 confidence = calculate_confidence_encoder_per_expert(module.saved_attention_weights, router_desicion)
-                print("confidences: ", confidences)
-                conf_matrix[0][layer_num] += torch.tensor(confidence)
+                print("confidences: ", confidence)
+                for expert in range(8):
+                    conf_matrix[expert][layer_num] += torch.tensor(confidence[expert])
+                    if confidence[expert].sum() == 0:
+                        print("confidence is zero at expert: ", expert)
+                    else:
+                        expert_cnt[expert] += 1
                 exit()
 
         # if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
