@@ -140,6 +140,7 @@ for i in range(test_num):
                 # print("confidences: ", confidence)
                 for expert in range(8):
                     conf_matrix[expert][layer_num] += confidence[expert]
+                    print("confidence: ", confidence[expert])
                     if confidence[expert].sum() != 0:
                         expert_cnt[expert] += 1
                     else:
@@ -179,11 +180,11 @@ for expert in range(8):
     print("conf_mat at exp: ", expert, " ", conf_matrix[expert])
 
 
-for name, module in model.named_modules():
-    if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        print(encoder_router_history)
+# for name, module in model.named_modules():
+#     if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
+#         # print(name)
+#         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+#         print(encoder_router_history)
         # print("\n")
 #     if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
 #         # print(name)
