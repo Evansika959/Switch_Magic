@@ -20,8 +20,8 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
         list: A list of confidence values for each attention head.
     """
     batch_size, num_heads, seq_len, _ = attention_weights.shape
-    confidences = torch.zeros(8, 12)
-    len_experts = torch.zeros(8)
+    confidences = []
+    confidence_expert = torch.zeros(8)
     num_experts = 8
 
     # Iterate over each head
@@ -44,7 +44,8 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
                     print("max_weights: ", max_weights)
 
         # Compute the average of max weights for the current head
-        confidence = sum(max_weights) / len(max_weights) if len(max_weights) > 0 else 0
+        for expert in range(num_experts):
+            confidence_expert[expert] = sum(max_weights[expert]) / len(max_weights[expert]) if len(max_weights[expert]) > 0 else 0
         print("confidence: ", confidence)
         confidences.append(confidence)
 
