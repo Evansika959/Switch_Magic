@@ -7,7 +7,7 @@ from torchsummary import summary
 import re
 from plot_heat_map import plot_heat_map, plot_confidence_map
 
-def calculate_confidence_encoder(attention_weights):
+def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
     """
     Calculate the confidence of each attention head.
     Confidence is defined as the average of the maximum attention weights, excluding the EOS token.
@@ -20,7 +20,7 @@ def calculate_confidence_encoder(attention_weights):
         list: A list of confidence values for each attention head.
     """
     batch_size, num_heads, seq_len, _ = attention_weights.shape
-    confidences = []
+    confidences = torch.zeros(8, 12, 12)
 
     # Iterate over each head
     for head in range(num_heads):
@@ -110,10 +110,6 @@ for i in range(test_num):
         loss = outputs.loss
 
     for name, module in model.named_modules():
-        if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
-            # print(name)
-            encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-            print(encoder_router_history)
         if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
             match = re.search(r'block\.(\d+)', name)
 
@@ -126,9 +122,10 @@ for i in range(test_num):
             # record attention confidence based on the router history 
             if layer_num % 2 == 1:
                 mlp_module = model.encoder.block[layer_num].layer[1].mlp
-                print("mlp_module: ", mlp_module.router_history[-1])
+                router_desicion = mlp_module.router_history[-1]
+                print("mlp_module: ", router_desicion)
 
-                confidence = calculate_confidence_encoder(module.saved_attention_weights)
+                confidence = calculate_confidence_encoder_per_expert(module.saved_attention_weights, router_desicion)
                 print("confidence: ", confidence)
                 conf_matrix[0][layer_num] += torch.tensor(confidence)
 

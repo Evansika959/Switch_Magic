@@ -34,6 +34,8 @@ def calculate_confidence_encoder(attention_weights):
                     # Extract the attention weights for the current head and token
                     head_weights = attention_weights[batch, head, token][:-1]
 
+                    print(head_weights)
+
                     # Find the maximum attention weight for this token over all key positions
                     max_weight = torch.max(head_weights)
                     max_weights.append(max_weight.item())
