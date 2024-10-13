@@ -110,7 +110,7 @@ for i in range(test_num):
     for name, module in model.named_modules():
         if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
             # print(name)
-            print(module.router_history.shape)
+            print(module.router_history)
         if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
             match = re.search(r'block\.(\d+)', name)
 
