@@ -140,7 +140,7 @@ for i in range(test_num):
                 # print("confidences: ", confidence)
                 for expert in range(8):
                     conf_matrix[expert][layer_num] += confidence[expert]
-                    print("confidence: ", confidence[expert])
+                    print("confidence: ", conf_matrix[expert][layer_num])
                     if confidence[expert].sum() != 0:
                         expert_cnt[expert] += 1
                     else:
