@@ -122,7 +122,7 @@ for i in range(test_num):
                 print("Layer number not found")
             print("attention_weights: ", module.saved_attention_weights.shape)
 
-            mlp_module = model.encoder.block[layer_num].layer[0].mlp
+            mlp_module = model.encoder.block[layer_num].layer[1].mlp
             print("mlp_module: ", mlp_module)
 
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
