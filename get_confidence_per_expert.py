@@ -65,20 +65,18 @@ import random
 random.seed(42)
 test_num = 200
 
-conf_matrix = torch.zeros(12, 12)
+conf_matrix = torch.zeros(8, 12, 12)  # 8 heads, 12 layers, 12 heads
 
-decoder_conf_matrix = torch.zeros(12, 12)
+decoder_conf_matrix = torch.zeros(8, 12, 12)
 
-cross_conf_matrix = torch.zeros(12, 12)
-
-conf_mat_50 = torch.zeros(12, 12)
-conf_mat_100 = torch.zeros(12, 12)
-conf_mat_200 = torch.zeros(12, 12)
-conf_mat_500 = torch.zeros(12, 12) 
+cross_conf_matrix = torch.zeros(8, 12, 12)
 
 pattern_attn = r'^encoder\..*\.SelfAttention$'
 pattern_attn_de = r'^decoder\..*\.SelfAttention$'
 pattern_attn_cross = r'^decoder\..*\.EncDecAttention$'
+
+pattern_en_mlp = r'^encoder\..*\.mlp$'
+pattern_de_mlp = r'^decoder\..*\.mlp$'
 
 
 for i in range(test_num):
@@ -110,7 +108,7 @@ for i in range(test_num):
         loss = outputs.loss
 
     for name, module in model.named_modules():
-        if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
+        if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
             # print(name)
             print(module.router_history.shape)
         if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
@@ -146,15 +144,6 @@ for i in range(test_num):
         #     confidence = calculate_confidence_encoder(module.saved_attention_weights)
         #     cross_conf_matrix[layer_num] += torch.tensor(confidence)
 
-    if i == 49:
-        conf_mat_50 += conf_matrix/50
-    elif i == 99:
-        conf_mat_100 += conf_matrix/100
-    elif i == 199:
-        conf_mat_200 += conf_matrix/200
-    elif i == 499:
-        conf_mat_500 += conf_matrix/500
-
     print("Test Case:", i, "Loss:", loss.item())
 
 decoder_conf_matrix /= test_num
@@ -186,33 +175,27 @@ print("Generated German Translation:")
 print(generated_text)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-pattern = r'^encoder\..*\.mlp$'
-pattern2 = r'^decoder\..*\.mlp$'
+
 
 encoder_router_history = {}
 decoder_router_history = {}
 
-for name, module in model.named_modules():
-    if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        print(module.router_history.shape)
-        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        # print("\n")
-    if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        # print(module.router_history)
-        decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        # print("\n")
+# for name, module in model.named_modules():
+#     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
+#         # print(name)
+#         print(module.router_history.shape)
+#         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+#         # print("\n")
+#     if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
+#         # print(name)
+#         # print(module.router_history)
+#         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+#         # print("\n")
         
 
-plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
+# plot_heat_map(encoder_router_history, filename="encoder_router_history_cmp", title="Router History of Encoder Blocks")
 # plot_heat_map(decoder_router_history, filename="decoder_router_history_cmp", title="Router History of Decoder Blocks")
 
-
-# plot_confidence_map(conf_mat_50, filename="conf_mat_50", title="Confidence Matrix of Encoder Blocks (50 samples)")
-# plot_confidence_map(conf_mat_100, filename="conf_mat_100", title="Confidence Matrix of Encoder Blocks (100 samples)")
-# plot_confidence_map(conf_mat_200, filename="conf_mat_200", title="Confidence Matrix of Encoder Blocks (200 samples)")
-# plot_confidence_map(conf_mat_500, filename="conf_mat_500", title="Confidence Matrix of Encoder Blocks (500 samples)")
 
 # plot_confidence_map(conf_matrix, filename="conf_mat", title="Confidence Matrix of Encoder Self-Attention")
 # plot_confidence_map(decoder_conf_matrix, filename="decoder_conf_mat", title="Confidence Matrix of Decoder Self-Attention")
