@@ -140,7 +140,7 @@ for i in range(test_num):
                 confidence = confidence.transpose(0, 1)
                 print("confidences: ", confidence)
                 for expert in range(8):
-                    conf_matrix[expert][layer_num] += torch.tensor(confidence[expert])
+                    conf_matrix[expert][layer_num] += confidence[expert]
                     if confidence[expert].sum() == 0:
                         print("confidence is zero at expert: ", expert)
                     else:
