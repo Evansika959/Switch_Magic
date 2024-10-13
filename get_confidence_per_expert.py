@@ -20,7 +20,7 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
         list: A list of confidence values for each attention head.
     """
     batch_size, num_heads, seq_len, _ = attention_weights.shape
-    confidences = []
+    confidences = torch.zeros(12,8)
     confidence_expert = torch.zeros(8)
     num_experts = 8
 
@@ -47,7 +47,8 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
         for expert in range(num_experts):
             confidence_expert[expert] = sum(max_weights[expert]) / len(max_weights[expert]) if len(max_weights[expert]) > 0 else 0
         print("confidence: ", confidence_expert)
-        confidences.append(confidence_expert)
+        confidences[head] = confidence_expert
+        print("it: ", confidences)
 
     return confidences
 
@@ -133,7 +134,7 @@ for i in range(test_num):
                 print("mlp_module: ", router_desicion)
 
                 confidence = calculate_confidence_encoder_per_expert(module.saved_attention_weights, router_desicion)
-                print("confidence: ", confidence)
+                print("confidences: ", confidences)
                 conf_matrix[0][layer_num] += torch.tensor(confidence)
                 exit()
 
