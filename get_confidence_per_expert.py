@@ -112,7 +112,8 @@ for i in range(test_num):
     for name, module in model.named_modules():
         if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
             # print(name)
-            print(module.router_history)
+            encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+            print(encoder_router_history)
         if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
             match = re.search(r'block\.(\d+)', name)
 
@@ -123,7 +124,7 @@ for i in range(test_num):
             print("attention_weights: ", module.saved_attention_weights.shape)
 
             mlp_module = model.encoder.block[layer_num].layer[1].mlp
-            print("mlp_module: ", mlp_module)
+            print("mlp_module: ", mlp_module.router_history[-1])
 
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
@@ -156,36 +157,13 @@ decoder_conf_matrix /= test_num
 cross_conf_matrix /= test_num
 conf_matrix /= test_num
 
-# Tokenize the input
-input_text = "What is this?"
-inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
 
-print("Original English Sentence:")
-print(input_text)
-print(inputs)
-
-# Generate translation
-model.eval()
-with torch.no_grad():
-    outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
-
-# Decode the generated tokens
-generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-# Print the generated translation
-print("Generated German Translation:")
-print(generated_text)
-
-# Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-
-
-
-# for name, module in model.named_modules():
-#     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
-#         # print(name)
-#         print(module.router_history.shape)
-#         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-#         # print("\n")
+for name, module in model.named_modules():
+    if re.match(pattern_en_mlp, name) and isinstance(module, SwitchTransformersSparseMLP):
+        # print(name)
+        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+        print(encoder_router_history)
+        # print("\n")
 #     if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
 #         # print(name)
 #         # print(module.router_history)
