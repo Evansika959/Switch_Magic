@@ -41,14 +41,13 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
                     # Find the maximum attention weight for this token over all key positions
                     max_weight = torch.max(head_weights)
                     max_weights[expert_idx].append(max_weight.item())
-                    print("max_weights: ", max_weights)
+                    # print("max_weights: ", max_weights)
 
         # Compute the average of max weights for the current head
         for expert in range(num_experts):
             confidence_expert[expert] = sum(max_weights[expert]) / len(max_weights[expert]) if len(max_weights[expert]) > 0 else 0
-        print("confidence: ", confidence_expert)
+        # print("confidence: ", confidence_expert)
         confidences[head] = confidence_expert
-        print("it: ", confidences)
 
     return confidences
 
@@ -136,16 +135,16 @@ for i in range(test_num):
                 print("mlp_module: ", router_desicion)
 
                 confidence = calculate_confidence_encoder_per_expert(module.saved_attention_weights, router_desicion)
-                print("confidences: ", confidence)
+                # print("confidences: ", confidence)
                 confidence = confidence.transpose(0, 1)
-                print("confidences: ", confidence)
+                # print("confidences: ", confidence)
                 for expert in range(8):
                     conf_matrix[expert][layer_num] += confidence[expert]
-                    if confidence[expert].sum() == 0:
-                        print("confidence is zero at expert: ", expert)
-                        exit()
-                    else:
+                    if confidence[expert].sum() != 0:
                         expert_cnt[expert] += 1
+                    else:
+                        print("confidence is zero at expert: ", expert, "layer: ", layer_num)
+
 
         # if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
         #     match = re.search(r'block\.(\d+)', name)
@@ -171,9 +170,13 @@ for i in range(test_num):
 
     print("Test Case:", i, "Loss:", loss.item())
 
-decoder_conf_matrix /= test_num
-cross_conf_matrix /= test_num
-conf_matrix /= test_num
+# decoder_conf_matrix /= test_num
+# cross_conf_matrix /= test_num
+print("conf_mat: ", conf_matrix)
+
+for expert in range(8):
+    conf_matrix[expert] /= expert_cnt[expert]
+    print("conf_mat at exp: ", expert, " ", conf_matrix[expert])
 
 
 for name, module in model.named_modules():
