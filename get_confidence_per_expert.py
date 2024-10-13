@@ -137,6 +137,8 @@ for i in range(test_num):
 
                 confidence = calculate_confidence_encoder_per_expert(module.saved_attention_weights, router_desicion)
                 print("confidences: ", confidence)
+                confidence = confidence.transpose(0, 1)
+                print("confidences: ", confidence)
                 for expert in range(8):
                     conf_matrix[expert][layer_num] += torch.tensor(confidence[expert])
                     if confidence[expert].sum() == 0:
