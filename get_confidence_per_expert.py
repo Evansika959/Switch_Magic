@@ -123,8 +123,9 @@ for i in range(test_num):
                 print("Layer number not found")
             print("attention_weights: ", module.saved_attention_weights.shape)
 
-            mlp_module = model.encoder.block[layer_num].layer[1].mlp
-            print("mlp_module: ", mlp_module.router_history[-1])
+            if layer_num % 2 == 1:
+                mlp_module = model.encoder.block[layer_num].layer[1].mlp
+                print("mlp_module: ", mlp_module.router_history[-1])
 
             confidence = calculate_confidence_encoder(module.saved_attention_weights)
             conf_matrix[layer_num] += torch.tensor(confidence)
