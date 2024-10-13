@@ -143,9 +143,9 @@ for i in range(test_num):
                     conf_matrix[expert][layer_num] += confidence[expert]
                     if confidence[expert].sum() == 0:
                         print("confidence is zero at expert: ", expert)
+                        exit()
                     else:
                         expert_cnt[expert] += 1
-                exit()
 
         # if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
         #     match = re.search(r'block\.(\d+)', name)
