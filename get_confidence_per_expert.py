@@ -25,7 +25,7 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
 
     # Iterate over each head
     for head in range(num_heads):
-        max_weights = torch.zeros(8, 12)  # Store max attention weights for each token
+        max_weights = [[]]  # Store max attention weights for each token
 
         # Iterate over each sequence in the batch
         for batch in range(batch_size):
