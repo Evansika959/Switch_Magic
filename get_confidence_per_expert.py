@@ -20,11 +20,12 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
         list: A list of confidence values for each attention head.
     """
     batch_size, num_heads, seq_len, _ = attention_weights.shape
-    confidences = torch.zeros(8, 12, 12)
+    confidences = torch.zeros(8, 12)
+    len_experts = torch.zeros(8)
 
     # Iterate over each head
     for head in range(num_heads):
-        max_weights = []  # Store max attention weights for each token
+        max_weights = torch.zeros(8, 12)  # Store max attention weights for each token
 
         # Iterate over each sequence in the batch
         for batch in range(batch_size):
@@ -34,12 +35,16 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
                     # Extract the attention weights for the current head and token
                     head_weights = attention_weights[batch, head, token][:-1]
 
+                    expert_idx = router_decision[token]
+
                     # Find the maximum attention weight for this token over all key positions
                     max_weight = torch.max(head_weights)
-                    max_weights.append(max_weight.item())
+                    max_weights[expert_idx].append(max_weight.item())
+                    print("max_weights: ", max_weights)
 
         # Compute the average of max weights for the current head
         confidence = sum(max_weights) / len(max_weights) if len(max_weights) > 0 else 0
+        print("confidence: ", confidence)
         confidences.append(confidence)
 
     return confidences
@@ -128,6 +133,7 @@ for i in range(test_num):
                 confidence = calculate_confidence_encoder_per_expert(module.saved_attention_weights, router_desicion)
                 print("confidence: ", confidence)
                 conf_matrix[0][layer_num] += torch.tensor(confidence)
+                exit()
 
         # if re.match(pattern_attn_de, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
         #     match = re.search(r'block\.(\d+)', name)

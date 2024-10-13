@@ -22,8 +22,6 @@ def calculate_confidence_encoder(attention_weights):
     batch_size, num_heads, seq_len, _ = attention_weights.shape
     confidences = []
 
-    print("attention_weights:", attention_weights)
-
     # Iterate over each head
     for head in range(num_heads):
         max_weights = []  # Store max attention weights for each token
@@ -35,8 +33,6 @@ def calculate_confidence_encoder(attention_weights):
                 if token != seq_len:  # Exclude the EOS token
                     # Extract the attention weights for the current head and token
                     head_weights = attention_weights[batch, head, token][:-1]
-
-                    print("head_weights:", head_weights)
 
                     # Find the maximum attention weight for this token over all key positions
                     max_weight = torch.max(head_weights)
