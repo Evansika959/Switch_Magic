@@ -46,8 +46,8 @@ def calculate_confidence_encoder_per_expert(attention_weights, router_decision):
         # Compute the average of max weights for the current head
         for expert in range(num_experts):
             confidence_expert[expert] = sum(max_weights[expert]) / len(max_weights[expert]) if len(max_weights[expert]) > 0 else 0
-        print("confidence: ", confidence)
-        confidences.append(confidence)
+        print("confidence: ", confidence_expert)
+        confidences.append(confidence_expert)
 
     return confidences
 
