@@ -110,6 +110,9 @@ for i in range(test_num):
         loss = outputs.loss
 
     for name, module in model.named_modules():
+        if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
+            # print(name)
+            print(module.router_history.shape)
         if re.match(pattern_attn, name) and isinstance(module, transformers_cp.src.transformers.models.switch_transformers.modeling_switch_transformers.SwitchTransformersAttention):
             match = re.search(r'block\.(\d+)', name)
 

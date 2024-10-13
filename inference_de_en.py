@@ -13,7 +13,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
     "google/switch-base-8",
     device_map="auto"  # Automatically distribute the model across available devices
 )
-model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transformer.pth'))
+# model.load_state_dict(torch.load('./checkpoints_switch_forLRP/best_switch_transformer.pth'))
 
 # Set the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -92,16 +92,16 @@ for name, module in model.named_modules():
         # print(name)
         # print(module.router_history)
         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        print("\n")
+        # print("\n")
     if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
         # print(name)
         # print(module.router_history)
         decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
-        print("\n")
+        # print("\n")
 
 
-# plot_heat_map(encoder_router_history, filename="encoder_router_history", title="Router History of Encoder Blocks")
-# plot_heat_map(decoder_router_history, filename="decoder_router_history", title="Router History of Decoder Blocks")
+plot_heat_map(encoder_router_history, filename="encoder_router_history_raw", title="Router History of Encoder Blocks")
+plot_heat_map(decoder_router_history, filename="decoder_router_history_raw", title="Router History of Decoder Blocks")
 
 #calculate LRP
 
