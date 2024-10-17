@@ -27,7 +27,7 @@ print(dataset["train"][0:3])
 def preprocess_function(examples):
     en_texts = [ex["en"] for ex in examples["translation"]]
     de_texts = [ex["de"] for ex in examples["translation"]]
-    model_inputs = tokenizer(en_texts, text_target=de_texts,
+    model_inputs = tokenizer(de_texts, text_target=en_texts,
                              max_length=128, truncation=True, padding="max_length", return_tensors="pt")
     return model_inputs
 
@@ -69,7 +69,7 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', fa
 loss_fn = nn.CrossEntropyLoss(ignore_index=tokenizer.pad_token_id)
 
 # Directory for checkpoints
-checkpoint_dir = './checkpoints_switch_forLRP'
+checkpoint_dir = './checkpoints_switch_de2en'
 if not os.path.exists(checkpoint_dir):
     os.makedirs(checkpoint_dir)
 
