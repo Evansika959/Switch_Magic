@@ -25,7 +25,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 5
+test_num = 200
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -33,8 +33,8 @@ for i in range(test_num):
 
     # Select a test case from the dataset
     test_case = dataset["test"][idx]
-    print("Original Sentence:")
-    print(test_case["translation"]["de"])
+    # print("Original Sentence:")
+    # print(test_case["translation"]["de"])
 
     # Tokenize the input
     input_text = test_case["translation"]["de"]
@@ -49,13 +49,13 @@ for i in range(test_num):
     generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     # Print the generated translation
-    print("Generated German Translation:")
-    print(generated_text)
+    # print("Generated German Translation:")
+    # print(generated_text)
 
-    print("Reference German Translation:")
-    print(test_case["translation"]["en"])
-    print(f"Case {i+1} of {test_num} Finished")
-    print("\n")
+    # print("Reference German Translation:")
+    # print(test_case["translation"]["en"])
+    # print(f"Case {i+1} of {test_num} Finished")
+    # print("\n")
 
 # Tokenize the input
 input_text = "Was ist das"
@@ -98,8 +98,8 @@ for name, module in model.named_modules():
         # print("\n")
 
 
-# plot_heat_map(encoder_router_history, filename="encoder_router_history", title="Router History of Encoder Blocks")
-# plot_heat_map(decoder_router_history, filename="decoder_router_history", title="Router History of Decoder Blocks")
+plot_heat_map(encoder_router_history, filename="encoder_router_history_de2en", title="Router History of Encoder Blocks")
+plot_heat_map(decoder_router_history, filename="decoder_router_history_de2en", title="Router History of Decoder Blocks")
 
 #calculate LRP
 
