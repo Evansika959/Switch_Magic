@@ -44,7 +44,7 @@ target_module = model.encoder.block[1].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
-test_num = 1
+test_num = 2
 
 rout_dict = {}
 
@@ -84,17 +84,17 @@ for i in range(test_num):
 
 
     print(enumerate(target_module.router_history[:-1]))
-    routing_rst = list(enumerate(target_module.router_history[:-1]))
+    routing_rst = torch.cat(target_module.router_history[i]).flatten()
     print(routing_rst)
 
-    i = 0
+    cnt = 0
     for token_text, pos in pos_tags:
         print(f"{token_text}: {pos}")
         if pos not in rout_dict:
             rout_dict[pos] = []
 
         # rout_dict[pos].append(routing_rst[i])
-        i+=1
+        cnt+=1
 
 
 print(rout_dict)
