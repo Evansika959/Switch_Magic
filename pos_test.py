@@ -28,7 +28,7 @@ def custom_hf_tokenizer(nlp, text):
     # Use Hugging Face tokenizer to tokenize the text
     hf_tokens = tokenizer.tokenize(text)
     # Convert tokens to Spacy's token format
-    words = [token.replace("▁", "") for token in hf_tokens]  # Adjust subword tokens if needed
+    words = [token.replace("▁", "") for token in hf_tokens if token.replace("▁", "").strip()]
     return Doc(nlp.vocab, words=words)
 
 # Set the custom tokenizer in Spacy
@@ -49,13 +49,14 @@ for i in range(test_num):
     test_case = dataset["test"][idx]
     input_text = test_case["translation"]["en"]
 
+    print("Original English Sentence:")
+    print(input_text)
+
     # Step 1: POS Tagging using Spacy
     doc = nlp(input_text)
     pos_tags = [(token.text, token.pos_) for token in doc]
 
-    print("Original English Sentence:")
-    print(input_text)
-
+    
     print("Words and their POS tags:")
     for token_text, pos in pos_tags:
         print(f"{token_text}: {pos}")
