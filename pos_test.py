@@ -44,7 +44,7 @@ target_module = model.encoder.block[1].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
-test_num = 2
+test_num = 1
 
 rout_dict = {}
 
@@ -82,10 +82,8 @@ for i in range(test_num):
     with torch.no_grad():
         outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
 
-
-    print(enumerate(target_module.router_history[:-1]))
-    routing_rst = target_module.router_history[i]
-    print(routing_rst)
+    routing_rst = target_module.router_history[i].tolist()
+    print("Routing result: ",routing_rst)
 
     cnt = 0
     for token_text, pos in pos_tags:
@@ -98,8 +96,6 @@ for i in range(test_num):
 
 
 print(rout_dict)
-
-print(torch.cat(target_module.router_history).flatten())
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 pattern = r'^encoder.block.1\..*\.mlp$' 
