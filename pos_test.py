@@ -67,6 +67,9 @@ for i in range(test_num):
     # Get the tokenized input (list of tokens)
     input_tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
     print("Tokenized input:", input_tokens)
+    print(inputs)
+
+    print("input length:", len(input_tokens), len(inputs))
 
     # Step 3: Align the Spacy tokens (words) with Hugging Face tokenizer tokens
     model.eval()
