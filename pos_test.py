@@ -67,7 +67,7 @@ for i in range(test_num):
 
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-pattern = r'^encoder\..*\.mlp$'
+pattern = r'^encoder.block.1\..*\.mlp$' 
 pattern2 = r'^decoder\..*\.mlp$'
 
 
