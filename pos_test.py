@@ -84,7 +84,7 @@ for i in range(test_num):
 
 
     print(enumerate(target_module.router_history[:-1]))
-    routing_rst = torch.cat(target_module.router_history[i]).flatten()
+    routing_rst = target_module.router_history[i]
     print(routing_rst)
 
     cnt = 0
