@@ -85,6 +85,8 @@ for i in range(test_num):
     i = 0
     for token_text, pos in pos_tags:
         print(f"{token_text}: {pos}")
+        if pos not in rout_dict:
+            rout_dict[pos] = []
         rout_dict[pos].append(target_module.router_history[:-1][i])
         i+=1
 
