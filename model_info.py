@@ -1,8 +1,6 @@
 from transformers import AutoModel, AutoConfig
 from torchsummary import summary
 
-
-
 # Replace with your model's identifier or local path
 model_name = "google/switch-base-8"
 
