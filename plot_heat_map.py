@@ -49,8 +49,6 @@ def plot_heat_map(data,filename="heatmap",title="Heatmap of Activated Experts in
         for expert in data[key]:
             activation_matrix[idx, expert] += 1
 
-    print(activation_matrix)
-
     activation_matrix = activation_matrix / activation_matrix.sum(axis=1, keepdims=True)
 
     # Create a heatmap using matplotlib
@@ -90,5 +88,33 @@ def plot_confidence_map(data, filename="confidence_map", title="Heatmap of Confi
     plt.yticks(ticks=range(len(data)), labels=[f'{i}' for i in range(len(data))], fontsize=22)  # Set y-axis ticks
     plt.tight_layout()
     plt.savefig(f"plots/{filename}.png")  # Save the heatmap as a PNG file
+
+def plot_pos_heat_map(data,filename="heatmap",title="Heatmap of Activated Experts in Encoder Blocks"):
+    # Extract the list of experts activated in each block
+    blocks = list(data.keys())
+    num_blocks = len(blocks)
+    max_experts = max(max(v) for v in data.values()) + 1  # Number of experts + 1 for zero-based indexing
+
+    # Create a matrix to store the expert activation counts for each block
+    activation_matrix = np.zeros((num_blocks, max_experts))
+
+    # Populate the activation matrix with the count of each expert activation
+    for idx, key in enumerate(blocks):
+        for expert in data[key]:
+            activation_matrix[idx, expert] += 1
+
+    activation_matrix = activation_matrix / activation_matrix.sum(axis=1, keepdims=True)
+
+    # Create a heatmap using matplotlib
+    plt.figure(figsize=(15, 12))
+    plt.imshow(activation_matrix, cmap="Blues", interpolation="none")
+    plt.colorbar(label="Activation Count")
+    plt.xticks(ticks=np.arange(max_experts), labels=[f"Expert {i}" for i in range(max_experts)], fontsize=22)
+    plt.yticks(ticks=np.arange(num_blocks), labels=blocks, fontsize=22)
+    plt.xlabel("Expert Index", fontsize=24)
+    plt.ylabel("POS Tags", fontsize=24)
+    plt.title(title, fontsize=26)
+    plt.savefig(f"plots/{filename}.png")
+
 
 

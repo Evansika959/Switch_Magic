@@ -8,6 +8,8 @@ from spacy.tokens import Doc
 
 import re
 
+from plot_heat_map import plot_pos_heat_map
+
 # Load the tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("google/switch-base-8")
 model = SwitchTransformersForConditionalGeneration.from_pretrained(
@@ -40,11 +42,12 @@ nlp.tokenizer = lambda text: custom_hf_tokenizer(nlp, text)
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
 
-target_module = model.encoder.block[1].layer[1].mlp
+traget_layer = 1
+target_module = model.encoder.block[traget_layer].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
-test_num = 5
+test_num = 50
 
 rout_dict = {}
 
@@ -56,8 +59,8 @@ for i in range(test_num):
     test_case = dataset["test"][idx]
     input_text = test_case["translation"]["en"]
 
-    print("Original English Sentence:")
-    print(input_text)
+    # print("Original English Sentence:")
+    # print(input_text)
 
     # Step 1: POS Tagging using Spacy
     doc = nlp(input_text)
@@ -72,10 +75,6 @@ for i in range(test_num):
 
     # Get the tokenized input (list of tokens)
     input_tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
-    print("Tokenized input:", input_tokens)
-    print(inputs)
-
-    print("input length:", len(input_tokens), len(inputs["input_ids"]))
 
     # Step 3: Align the Spacy tokens (words) with Hugging Face tokenizer tokens
     model.eval()
@@ -83,7 +82,6 @@ for i in range(test_num):
         outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
 
     routing_rst = target_module.router_history[i].tolist()
-    print("Routing result: ",routing_rst)
 
     cnt = 0
     for token_text, pos in pos_tags:
@@ -97,18 +95,20 @@ for i in range(test_num):
 
 print(rout_dict)
 
+plot_pos_heat_map(rout_dict, filename="pos_heat_map", title="POS Tag Heat Map for Encoder Layer {target_layer}")
+
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
-pattern = r'^encoder.block.1\..*\.mlp$' 
-pattern2 = r'^decoder\..*\.mlp$'
+# pattern = r'^encoder.block.1\..*\.mlp$' 
+# pattern2 = r'^decoder\..*\.mlp$'
 
-encoder_router_history = {}
-decoder_router_history = {}
+# encoder_router_history = {}
+# decoder_router_history = {}
 
-for name, module in model.named_modules():
-    if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
-        print(name)
-        print(module.router_history)
-        encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+# for name, module in model.named_modules():
+#     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
+#         print(name)
+#         print(module.router_history)
+#         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
     # if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
     #     # print(name)
