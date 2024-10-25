@@ -4,6 +4,7 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 import random
 import spacy
+from spacy.tokens import Doc
 
 import re
 
@@ -21,6 +22,17 @@ model.to(device)
 
 # Load Spacy English model for POS tagging
 nlp = spacy.load("en_core_web_sm")
+
+# Define a custom tokenizer function for Spacy that uses the Hugging Face tokenizer
+def custom_hf_tokenizer(nlp, text):
+    # Use Hugging Face tokenizer to tokenize the text
+    hf_tokens = tokenizer.tokenize(text)
+    # Convert tokens to Spacy's token format
+    words = [token.replace("▁", "") for token in hf_tokens]  # Adjust subword tokens if needed
+    return Doc(nlp.vocab, words=words)
+
+# Set the custom tokenizer in Spacy
+nlp.tokenizer = lambda text: custom_hf_tokenizer(nlp, text)
 
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
