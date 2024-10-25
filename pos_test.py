@@ -28,7 +28,10 @@ def custom_hf_tokenizer(nlp, text):
     # Use Hugging Face tokenizer to tokenize the text
     hf_tokens = tokenizer.tokenize(text)
     # Convert tokens to Spacy's token format
-    words = [token.replace("▁", "") for token in hf_tokens if token.replace("▁", "").strip()]
+    words = [
+        token.lstrip("▁") if token != "▁" and token.startswith("▁") else token
+        for token in hf_tokens if token.strip()
+    ]
     return Doc(nlp.vocab, words=words)
 
 # Set the custom tokenizer in Spacy
@@ -69,7 +72,7 @@ for i in range(test_num):
     print("Tokenized input:", input_tokens)
     print(inputs)
 
-    print("input length:", len(input_tokens), len(inputs))
+    print("input length:", len(input_tokens), len(inputs["input_ids"]))
 
     # Step 3: Align the Spacy tokens (words) with Hugging Face tokenizer tokens
     model.eval()
