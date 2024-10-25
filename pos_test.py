@@ -53,6 +53,9 @@ for i in range(test_num):
     doc = nlp(input_text)
     pos_tags = [(token.text, token.pos_) for token in doc]
 
+    print("Original English Sentence:")
+    print(input_text)
+
     print("Words and their POS tags:")
     for token_text, pos in pos_tags:
         print(f"{token_text}: {pos}")
