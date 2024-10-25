@@ -44,7 +44,7 @@ target_module = model.encoder.block[1].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
-test_num = 1
+test_num = 5
 
 rout_dict = {}
 
@@ -91,7 +91,7 @@ for i in range(test_num):
         if pos not in rout_dict:
             rout_dict[pos] = []
 
-        rout_dict[pos].append(routing_rst[i])
+        rout_dict[pos].append(routing_rst[cnt])
         cnt+=1
 
 
