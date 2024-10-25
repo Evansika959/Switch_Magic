@@ -40,6 +40,8 @@ nlp.tokenizer = lambda text: custom_hf_tokenizer(nlp, text)
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
 
+target_module = model.encoder.block[1].layer[1].mlp
+
 # Randomize the test iteration
 random.seed(40)
 test_num = 1
@@ -80,7 +82,6 @@ for i in range(test_num):
     with torch.no_grad():
         outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
 
-    target_module = model.encoder.block[1].layer[1].mlp
 
     print(enumerate(target_module.router_history[:-1]))
     routing_rst = list(enumerate(target_module.router_history[:-1]))
@@ -92,11 +93,13 @@ for i in range(test_num):
         if pos not in rout_dict:
             rout_dict[pos] = []
 
-        rout_dict[pos].append(routing_rst[i])
+        # rout_dict[pos].append(routing_rst[i])
         i+=1
 
 
 print(rout_dict)
+
+print(torch.cat(target_module.router_history).flatten())
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 pattern = r'^encoder.block.1\..*\.mlp$' 
