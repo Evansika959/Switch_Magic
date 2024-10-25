@@ -79,7 +79,7 @@ for i in range(test_num):
     print("\nReference Translation (German):")
     print(test_case["translation"]["de"])
 
-module = model.encoder.block[0].layer[1].mlp
+module = model.encoder.block[1].layer[1].mlp
 
 print(module.router_history)
 
