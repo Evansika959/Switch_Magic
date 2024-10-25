@@ -48,7 +48,7 @@ nlp.tokenizer = lambda text: custom_hf_tokenizer(nlp, text)
 dataset = load_dataset("wmt16", "de-en")
 
 target_layer = 1
-target_module = model.encoder.block[traget_layer].layer[1].mlp
+target_module = model.encoder.block[target_layer].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
