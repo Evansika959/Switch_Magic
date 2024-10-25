@@ -15,7 +15,7 @@ model = SwitchTransformersForConditionalGeneration.from_pretrained(
     "google/switch-base-8",
     device_map="auto"  # Automatically distribute the model across available devices
 )
-model.load_state_dict(torch.load('./checkpoints_switch_de2en/best_switch_transformer.pth'))
+model.load_state_dict(torch.load('./checkpoints_switch/best_switch_transformer.pth'))
 
 # Set the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -27,7 +27,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 1
+test_num = 2
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -39,8 +39,13 @@ for i in range(test_num):
     # print(test_case["translation"]["de"])
 
     # Tokenize the input
-    input_text = test_case["translation"]["de"]
+    input_text = test_case["translation"]["en"]
     inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
+
+    doc = nlp(input_text)
+
+    for token in doc:
+        print(f"{token.text}: {token.pos_}")
 
     # Generate translation
     model.eval()
@@ -59,30 +64,7 @@ for i in range(test_num):
     # print(f"Case {i+1} of {test_num} Finished")
     # print("\n")
 
-# Tokenize the input
-input_text = "Was ist das"
-inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
 
-print("Input:")
-print(input_text)
-
-doc = nlp(input_text)
-
-# 打印每个词的词性
-for token in doc:
-    print(f"{token.text}: {token.pos_}")
-
-# Generate translation
-model.eval()
-with torch.no_grad():
-    outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
-
-# Decode the generated tokens
-generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-# Print the generated translation
-print("Generated Translation:")
-print(generated_text)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 pattern = r'^encoder\..*\.mlp$'
@@ -98,10 +80,10 @@ for name, module in model.named_modules():
         # print(module.router_history)
         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
-    if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        # print(module.router_history)
-        decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
+    # if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
+    #     # print(name)
+    #     # print(module.router_history)
+    #     decoder_router_history[re.search(r'decoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
 
 
