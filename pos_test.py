@@ -47,7 +47,7 @@ target_module = model.encoder.block[traget_layer].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
-test_num = 50
+test_num = 200
 
 rout_dict = {}
 
@@ -85,17 +85,18 @@ for i in range(test_num):
 
     cnt = 0
     for token_text, pos in pos_tags:
-        print(f"{token_text}: {pos}")
         if pos not in rout_dict:
             rout_dict[pos] = []
 
         rout_dict[pos].append(routing_rst[cnt])
         cnt+=1
 
+    print(f"Case {i+1} of {test_num} Finished")
+
 
 print(rout_dict)
 
-plot_pos_heat_map(rout_dict, filename="pos_heat_map", title="POS Tag Heat Map for Encoder Layer {target_layer}")
+plot_pos_heat_map(rout_dict, filename="pos_heat_map_{target_layer}", title="POS Tag Heat Map for Encoder Layer {target_layer}")
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 # pattern = r'^encoder.block.1\..*\.mlp$' 
