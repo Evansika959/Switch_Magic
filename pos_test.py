@@ -5,6 +5,8 @@ from datasets import load_dataset
 import random
 import spacy
 
+import re
+
 # Load the tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("google/switch-base-8")
 model = SwitchTransformersForConditionalGeneration.from_pretrained(
@@ -77,12 +79,13 @@ for i in range(test_num):
     print("\nReference Translation (German):")
     print(test_case["translation"]["de"])
 
+module = model.encoder.block[0].layer[1].mlp
 
+print(module.router_history)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 pattern = r'^encoder.block.1\..*\.mlp$' 
 pattern2 = r'^decoder\..*\.mlp$'
-
 
 encoder_router_history = {}
 decoder_router_history = {}
