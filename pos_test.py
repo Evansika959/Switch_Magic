@@ -76,8 +76,8 @@ decoder_router_history = {}
 
 for name, module in model.named_modules():
     if re.match(pattern, name) and isinstance(module, SwitchTransformersSparseMLP):
-        # print(name)
-        # print(module.router_history)
+        print(name)
+        print(module.router_history)
         encoder_router_history[re.search(r'encoder\.block\.\d+', name).group()] = torch.cat(module.router_history).flatten()
         # print("\n")
     # if re.match(pattern2, name) and isinstance(module, SwitchTransformersSparseMLP):
