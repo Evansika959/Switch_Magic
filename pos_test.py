@@ -93,7 +93,7 @@ for i in range(test_num):
         if pos not in rout_dict:
             rout_dict[pos] = []
 
-        # rout_dict[pos].append(routing_rst[i])
+        rout_dict[pos].append(routing_rst[i])
         cnt+=1
 
 
