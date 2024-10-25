@@ -44,6 +44,8 @@ dataset = load_dataset("wmt16", "de-en")
 random.seed(40)
 test_num = 1
 
+rout_dict = {}
+
 for i in range(test_num):
     # randomly select 1 test case
     idx = random.randint(0, len(dataset["test"]))
@@ -60,9 +62,8 @@ for i in range(test_num):
     pos_tags = [(token.text, token.pos_) for token in doc]
 
     
-    print("Words and their POS tags:")
-    for token_text, pos in pos_tags:
-        print(f"{token_text}: {pos}")
+    # for token_text, pos in pos_tags:
+    #     print(f"{token_text}: {pos}")
 
     # Step 2: Tokenize the input using Hugging Face tokenizer
     inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
@@ -79,18 +80,16 @@ for i in range(test_num):
     with torch.no_grad():
         outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
 
-    # Decode the generated tokens
-    generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print("\nGenerated Translation (German):")
-    print(generated_text)
+    target_module = model.encoder.block[1].layer[1].mlp
 
-    # Print reference German translation
-    print("\nReference Translation (German):")
-    print(test_case["translation"]["de"])
+    i = 0
+    for token_text, pos in pos_tags:
+        print(f"{token_text}: {pos}")
+        rout_dict[pos].append(target_module.router_history[:-1][i])
+        i+=1
 
-module = model.encoder.block[1].layer[1].mlp
 
-print(module.router_history)
+print(rout_dict)
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 pattern = r'^encoder.block.1\..*\.mlp$' 
