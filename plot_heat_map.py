@@ -108,8 +108,10 @@ def plot_pos_heat_map(data,filename="heatmap",title="Heatmap of Activated Expert
     # Create a heatmap using matplotlib
     plt.figure(figsize=(15, 12))
     plt.imshow(activation_matrix, cmap="Blues", interpolation="none")
-    plt.colorbar(label="Activation Count")
-    plt.xticks(ticks=np.arange(max_experts), labels=[f"Expert {i}" for i in range(max_experts)], fontsize=22)
+    cbar = plt.colorbar()
+    cbar.set_label("Average Confidence", fontsize=20)
+    cbar.ax.tick_params(labelsize=18)
+    plt.xticks(ticks=np.arange(max_experts), labels=[f"{i}" for i in range(max_experts)], fontsize=22)
     plt.yticks(ticks=np.arange(num_blocks), labels=blocks, fontsize=22)
     plt.xlabel("Expert Index", fontsize=24)
     plt.ylabel("POS Tags", fontsize=24)

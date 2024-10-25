@@ -99,7 +99,7 @@ for i in range(test_num):
     print(f"Case {i+1} of {test_num} Finished")
 
 
-print(rout_dict)
+# print(rout_dict)
 filter_routing_dict(rout_dict)
 print(rout_dict)
 plot_pos_heat_map(rout_dict, filename=f"pos_heat_map_{target_layer}", title=f"POS Tag Heat Map for Encoder Layer {target_layer}")
