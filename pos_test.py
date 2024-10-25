@@ -27,7 +27,7 @@ dataset = load_dataset("wmt16", "de-en")
 # Randomize the test iteration
 import random
 random.seed(42)
-test_num = 2
+test_num = 1
 
 for i in range(test_num):
     # randomly select 1 test case
@@ -41,6 +41,8 @@ for i in range(test_num):
     # Tokenize the input
     input_text = test_case["translation"]["en"]
     inputs = tokenizer(input_text, return_tensors="pt", max_length=128, truncation=True).to(device)
+
+    print("tokenized input:", inputs)
 
     doc = nlp(input_text)
 
