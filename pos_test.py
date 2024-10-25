@@ -10,6 +10,11 @@ import re
 
 from plot_heat_map import plot_pos_heat_map
 
+def filter_routing_dict(rout_dict, min_length=50):
+    # Filter the dictionary to keep only keys with lists of length >= min_length
+    filtered_dict = {key: values for key, values in rout_dict.items() if len(values) >= min_length}
+    return filtered_dict
+
 # Load the tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained("google/switch-base-8")
 model = SwitchTransformersForConditionalGeneration.from_pretrained(
@@ -42,12 +47,12 @@ nlp.tokenizer = lambda text: custom_hf_tokenizer(nlp, text)
 # Load the WMT dataset
 dataset = load_dataset("wmt16", "de-en")
 
-traget_layer = 1
+target_layer = 1
 target_module = model.encoder.block[traget_layer].layer[1].mlp
 
 # Randomize the test iteration
 random.seed(40)
-test_num = 200
+test_num = 100
 
 rout_dict = {}
 
@@ -95,8 +100,9 @@ for i in range(test_num):
 
 
 print(rout_dict)
-
-plot_pos_heat_map(rout_dict, filename="pos_heat_map_{target_layer}", title="POS Tag Heat Map for Encoder Layer {target_layer}")
+filter_routing_dict(rout_dict)
+print(rout_dict)
+plot_pos_heat_map(rout_dict, filename=f"pos_heat_map_{target_layer}", title=f"POS Tag Heat Map for Encoder Layer {target_layer}")
 
 # Regex pattern to match all strings starting with "encoder" and ending with ".mlp"
 # pattern = r'^encoder.block.1\..*\.mlp$' 
