@@ -38,7 +38,7 @@ nlp.tokenizer = lambda text: custom_hf_tokenizer(nlp, text)
 dataset = load_dataset("wmt16", "de-en")
 
 # Randomize the test iteration
-random.seed(42)
+random.seed(40)
 test_num = 1
 
 for i in range(test_num):
@@ -65,19 +65,6 @@ for i in range(test_num):
     print("Tokenized input:", input_tokens)
 
     # Step 3: Align the Spacy tokens (words) with Hugging Face tokenizer tokens
-    # This step is necessary because Spacy tokens and the Hugging Face tokenizer tokens may not always align directly.
-    print("\nAlignment of tokens and POS tags:")
-    word_idx = 0
-    for token in input_tokens:
-        if token.startswith("▁"):  # If it's a new word, check alignment with Spacy token
-            word_text, word_pos = pos_tags[word_idx]
-            print(f"Token: {token}, Word: {word_text}, POS: {word_pos}")
-            word_idx += 1
-        else:
-            # Sub-word tokens are parts of previous words
-            print(f"Sub-token: {token}, belongs to word: {pos_tags[word_idx-1][0]}, POS: {pos_tags[word_idx-1][1]}")
-
-    # Step 4: Generate translation using the model
     model.eval()
     with torch.no_grad():
         outputs = model.generate(**inputs, max_length=128, num_beams=4, early_stopping=True)
