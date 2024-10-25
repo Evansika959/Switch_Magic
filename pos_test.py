@@ -82,7 +82,7 @@ for i in range(test_num):
 
     target_module = model.encoder.block[1].layer[1].mlp
 
-    routing_rst = enumerate(target_module.router_history[:-1])
+    routing_rst = enumerate(target_module.router_history[:-1]).tolist()
 
     i = 0
     for token_text, pos in pos_tags:
